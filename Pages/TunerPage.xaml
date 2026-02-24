@@ -2,7 +2,132 @@
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       Background="#1E1E2E">
-    <TextBlock Text="Тюнер"
-               Foreground="#6C7086" FontSize="24"
-               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Верхняя панель — строй и эталон -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal"
+                    HorizontalAlignment="Center" Margin="0 20 0 0">
+
+            <StackPanel Margin="0 0 32 0">
+                <TextBlock Text="Строй" Foreground="#6C7086" FontSize="12"
+                           HorizontalAlignment="Center" Margin="0 0 0 4"/>
+                <ComboBox x:Name="TuningBox"
+                          Width="200" Height="32"
+                          Background="#313244" Foreground="#CDD6F4"
+                          BorderThickness="0" FontSize="13"
+                          SelectionChanged="TuningBox_SelectionChanged"/>
+            </StackPanel>
+
+            <StackPanel>
+                <TextBlock Text="Эталон (Hz)" Foreground="#6C7086" FontSize="12"
+                           HorizontalAlignment="Center" Margin="0 0 0 4"/>
+                <StackPanel Orientation="Horizontal">
+                    <Button Content="−" Width="32" Height="32"
+                            Click="RefDown_Click" FontSize="16"/>
+                    <TextBlock x:Name="RefLabel" Text="440"
+                               FontSize="20" FontWeight="Bold"
+                               Foreground="#89B4FA"
+                               VerticalAlignment="Center"
+                               Margin="12 0" MinWidth="40"
+                               TextAlignment="Center"/>
+                    <Button Content="+" Width="32" Height="32"
+                            Click="RefUp_Click" FontSize="16"/>
+                </StackPanel>
+            </StackPanel>
+
+        </StackPanel>
+
+        <!-- Центр — нота и стрелка -->
+        <StackPanel Grid.Row="1" VerticalAlignment="Center"
+                    HorizontalAlignment="Center">
+
+            <!-- Большая нота -->
+            <TextBlock x:Name="NoteLabel"
+                       Text="—"
+                       FontSize="96" FontWeight="Bold"
+                       Foreground="#CDD6F4"
+                       HorizontalAlignment="Center"/>
+
+            <!-- Частота -->
+            <TextBlock x:Name="FreqLabel"
+                       Text="— Hz"
+                       FontSize="18" Foreground="#6C7086"
+                       HorizontalAlignment="Center"
+                       Margin="0 -8 0 24"/>
+
+            <!-- Стрелка-индикатор центов -->
+            <Grid Width="320" Height="80" Margin="0 0 0 8">
+
+                <!-- Шкала -->
+                <Rectangle Height="4" VerticalAlignment="Center"
+                           Fill="#313244" RadiusX="2" RadiusY="2"/>
+
+                <!-- Центральная метка -->
+                <Rectangle Width="3" Height="20"
+                           Fill="#A6E3A1" HorizontalAlignment="Center"
+                           VerticalAlignment="Center"/>
+
+                <!-- Метки центов -->
+                <TextBlock Text="-50" Foreground="#6C7086" FontSize="11"
+                           HorizontalAlignment="Left" VerticalAlignment="Bottom"/>
+                <TextBlock Text="0" Foreground="#6C7086" FontSize="11"
+                           HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
+                <TextBlock Text="+50" Foreground="#6C7086" FontSize="11"
+                           HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
+
+                <!-- Стрелка -->
+                <Canvas Width="320" Height="60" VerticalAlignment="Center">
+                    <Polygon x:Name="NeedleArrow"
+                             Points="0,-18 6,10 -6,10"
+                             Fill="#89B4FA">
+                        <Polygon.RenderTransform>
+                            <TranslateTransform x:Name="NeedleTranslate" X="160" Y="30"/>
+                        </Polygon.RenderTransform>
+                    </Polygon>
+                </Canvas>
+
+            </Grid>
+
+            <!-- Центы -->
+            <TextBlock x:Name="CentsLabel"
+                       Text="0 центов"
+                       FontSize="16" Foreground="#6C7086"
+                       HorizontalAlignment="Center"/>
+
+            <!-- Индикатор точного попадания -->
+            <Border x:Name="InTuneIndicator"
+                    Background="#313244"
+                    CornerRadius="8"
+                    Padding="20 8"
+                    Margin="0 16 0 0"
+                    HorizontalAlignment="Center">
+                <TextBlock x:Name="InTuneLabel"
+                           Text="Слушаю..."
+                           FontSize="16" FontWeight="Bold"
+                           Foreground="#6C7086"
+                           HorizontalAlignment="Center"/>
+            </Border>
+
+        </StackPanel>
+
+        <!-- Низ — струны текущего строя -->
+        <StackPanel Grid.Row="2" Margin="0 0 0 24">
+            <TextBlock Text="Струны" Foreground="#6C7086" FontSize="12"
+                       HorizontalAlignment="Center" Margin="0 0 0 8"/>
+            <ItemsControl x:Name="StringsPanel" HorizontalAlignment="Center">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+        </StackPanel>
+
+    </Grid>
 </Page>

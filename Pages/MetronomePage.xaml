@@ -36,11 +36,12 @@
 
                 <!-- Стержень маятника -->
                 <Line x:Name="PendulumRod"
-          X1="80" Y1="76"
-          X2="80" Y2="310"
-          Stroke="#89B4FA" StrokeThickness="3"
-          StrokeStartLineCap="Round"
-          StrokeEndLineCap="Round">
+      X1="80" Y1="76"
+      X2="80" Y2="310"
+      Stroke="#89B4FA" StrokeThickness="3"
+      StrokeStartLineCap="Round"
+      StrokeEndLineCap="Round"
+      Canvas.ZIndex="1">
                     <Line.RenderTransform>
                         <RotateTransform x:Name="PendulumRotate" CenterX="80" CenterY="76"/>
                     </Line.RenderTransform>
@@ -48,11 +49,12 @@
 
                 <!-- Груз маятника -->
                 <Ellipse x:Name="PendulumBob"
-             Width="36" Height="36"
-             Fill="#89B4FA"
-             Canvas.Left="62" Canvas.Top="292">
+         Width="36" Height="36"
+         Fill="#89B4FA"
+         Canvas.Left="62" Canvas.Top="292"
+         Canvas.ZIndex="2">
                     <Ellipse.RenderTransform>
-                        <RotateTransform x:Name="BobRotate" CenterX="-18" CenterY="-216"/>
+                        <RotateTransform x:Name="BobRotate" CenterX="0" CenterY="-216"/>
                     </Ellipse.RenderTransform>
                 </Ellipse>
 

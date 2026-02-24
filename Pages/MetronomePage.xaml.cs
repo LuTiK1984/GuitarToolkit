@@ -80,7 +80,7 @@ namespace GuitarToolkit.Pages
         private void SwingPendulum(int beatIndex)
         {
             double bpm = BpmSlider.Value;
-            double beatDuration = 60000.0 / bpm; // мс на один удар
+            double beatDuration = 60000.0 / bpm;
 
             double targetAngle = _pendulumLeft ? -28 : 28;
             _pendulumLeft = !_pendulumLeft;
@@ -92,10 +92,10 @@ namespace GuitarToolkit.Pages
                 EasingFunction = new SineEase { EasingMode = EasingMode.EaseInOut }
             };
 
+            // Один и тот же объект анимации на оба — гарантированно синхронно
             PendulumRotate.BeginAnimation(RotateTransform.AngleProperty, anim);
             BobRotate.BeginAnimation(RotateTransform.AngleProperty, anim);
 
-            // Подсветка груза на акцент
             PendulumBob.Fill = beatIndex == 0
                 ? new SolidColorBrush(Color.FromRgb(166, 227, 161))
                 : new SolidColorBrush(Color.FromRgb(137, 180, 250));
