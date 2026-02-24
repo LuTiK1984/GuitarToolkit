@@ -12,42 +12,49 @@
         <!-- ЛЕВАЯ ЧАСТЬ — Маятник -->
         <Grid Grid.Column="0">
             <Canvas x:Name="PendulumCanvas" HorizontalAlignment="Center" VerticalAlignment="Center"
-                    Width="160" Height="320">
+        Width="160" Height="360">
+
+                <!-- BPM над маятником — кликабельный для ввода -->
+                <TextBox x:Name="BpmLabel"
+         Text="120"
+         FontSize="48" FontWeight="Bold"
+         Foreground="#CDD6F4"
+         Background="Transparent"
+         BorderThickness="0"
+         TextAlignment="Center"
+         Canvas.Left="0" Canvas.Top="0"
+         Width="160"
+         CaretBrush="#CDD6F4"
+         SelectionBrush="#89B4FA"
+         KeyDown="BpmInput_KeyDown"
+         LostFocus="BpmInput_LostFocus"/>
+
+                <!-- Точка опоры -->
+                <Ellipse Width="12" Height="12"
+             Fill="#6C7086"
+             Canvas.Left="74" Canvas.Top="70"/>
 
                 <!-- Стержень маятника -->
                 <Line x:Name="PendulumRod"
-                      X1="80" Y1="10"
-                      X2="80" Y2="260"
-                      Stroke="#89B4FA" StrokeThickness="3"
-                      StrokeStartLineCap="Round"
-                      StrokeEndLineCap="Round">
+          X1="80" Y1="76"
+          X2="80" Y2="310"
+          Stroke="#89B4FA" StrokeThickness="3"
+          StrokeStartLineCap="Round"
+          StrokeEndLineCap="Round">
                     <Line.RenderTransform>
-                        <RotateTransform x:Name="PendulumRotate" CenterX="80" CenterY="10"/>
+                        <RotateTransform x:Name="PendulumRotate" CenterX="80" CenterY="76"/>
                     </Line.RenderTransform>
                 </Line>
 
                 <!-- Груз маятника -->
                 <Ellipse x:Name="PendulumBob"
-                         Width="36" Height="36"
-                         Fill="#89B4FA"
-                         Canvas.Left="62" Canvas.Top="242">
+             Width="36" Height="36"
+             Fill="#89B4FA"
+             Canvas.Left="62" Canvas.Top="292">
                     <Ellipse.RenderTransform>
-                        <RotateTransform x:Name="BobRotate" CenterX="-18" CenterY="-232"/>
+                        <RotateTransform x:Name="BobRotate" CenterX="-18" CenterY="-216"/>
                     </Ellipse.RenderTransform>
                 </Ellipse>
-
-                <!-- Точка опоры -->
-                <Ellipse Width="12" Height="12"
-                         Fill="#6C7086"
-                         Canvas.Left="74" Canvas.Top="4"/>
-
-                <!-- BPM по центру стержня -->
-                <TextBlock x:Name="BpmLabel"
-                           Text="120"
-                           FontSize="28" FontWeight="Bold"
-                           Foreground="#CDD6F4"
-                           Canvas.Left="0" Canvas.Top="120"
-                           Width="160" TextAlignment="Center"/>
 
             </Canvas>
         </Grid>
@@ -61,7 +68,7 @@
 
             <!-- Слайдер BPM -->
             <Slider x:Name="BpmSlider"
-                    Minimum="20" Maximum="300" Value="120"
+                    Minimum="20" Maximum="400" Value="120"
                     TickFrequency="1" IsSnapToTickEnabled="True"
                     Foreground="#89B4FA"
                     ValueChanged="BpmSlider_ValueChanged"
@@ -69,7 +76,7 @@
 
             <Grid Margin="0 0 0 20">
                 <TextBlock Text="20" Foreground="#6C7086" FontSize="11" HorizontalAlignment="Left"/>
-                <TextBlock Text="300" Foreground="#6C7086" FontSize="11" HorizontalAlignment="Right"/>
+                <TextBlock Text="400" Foreground="#6C7086" FontSize="11" HorizontalAlignment="Right"/>
             </Grid>
 
             <!-- Громкость -->

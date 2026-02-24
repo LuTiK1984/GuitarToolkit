@@ -31,6 +31,35 @@ namespace GuitarToolkit.Pages
             _metronome.BPM = bpm;
         }
 
+        private void BpmInput_KeyDown(object s, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == System.Windows.Input.Key.Enter)
+            {
+                ApplyBpmInput();
+                System.Windows.Input.Keyboard.ClearFocus();
+            }
+        }
+
+        private void BpmInput_LostFocus(object s, RoutedEventArgs e)
+        {
+            ApplyBpmInput();
+        }
+
+        private void ApplyBpmInput()
+        {
+            if (int.TryParse(BpmLabel.Text, out int bpm))
+            {
+                bpm = Math.Clamp(bpm, 20, 400);
+                BpmSlider.Value = bpm;
+                _metronome.BPM = bpm;
+            }
+            else
+            {
+                // Если ввели мусор — возвращаем текущее значение
+                BpmLabel.Text = ((int)BpmSlider.Value).ToString();
+            }
+        }
+
         // ── Доли в такте ──────────────────────────────────────────
         private void IncrBeats_Click(object s, RoutedEventArgs e) => SetBeats(_metronome.BeatsPerMeasure + 1);
         private void DecrBeats_Click(object s, RoutedEventArgs e) => SetBeats(_metronome.BeatsPerMeasure - 1);

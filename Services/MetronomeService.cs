@@ -30,7 +30,7 @@ namespace GuitarToolkit.Services
             get => _bpm;
             set
             {
-                _bpm = Math.Clamp(value, 20, 300);
+                _bpm = Math.Clamp(value, 20, 400);
                 if (_isRunning) Restart();
             }
         }
