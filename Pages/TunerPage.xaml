@@ -8,6 +8,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <!-- Верхняя панель — строй и эталон -->
@@ -119,7 +120,7 @@
         <!-- Низ — струны текущего строя -->
         <StackPanel Grid.Row="2" Margin="0 0 0 24">
             <TextBlock Text="Струны" Foreground="#6C7086" FontSize="12"
-                       HorizontalAlignment="Center" Margin="0 0 0 8"/>
+                       HorizontalAlignment="Center" Margin="0 16 0 8"/>
             <ItemsControl x:Name="StringsPanel" HorizontalAlignment="Center">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -128,6 +129,54 @@
                 </ItemsControl.ItemsPanel>
             </ItemsControl>
         </StackPanel>
+        <!-- Нижняя панель — громкость микрофона -->
+        <StackPanel Grid.Row="3" Margin="0 0 0 20">
 
+            <!-- Шкала громкости -->
+            <TextBlock Text="Уровень сигнала" Foreground="#6C7086" FontSize="12"
+               HorizontalAlignment="Center" Margin="0 0 0 6"/>
+            <Grid Width="320" Height="18" HorizontalAlignment="Center" Margin="0 0 0 12">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0.6*"/>
+                    <!-- зелёная зона -->
+                    <ColumnDefinition Width="0.25*"/>
+                    <!-- жёлтая зона -->
+                    <ColumnDefinition Width="0.15*"/>
+                    <!-- красная зона -->
+                </Grid.ColumnDefinitions>
+
+                <!-- Фон зон -->
+                <Rectangle Grid.Column="0" Fill="#1e3a2a" RadiusX="4" RadiusY="4"/>
+                <Rectangle Grid.Column="1" Fill="#3a3520"/>
+                <Rectangle Grid.Column="2" Fill="#3a1e20" RadiusX="4" RadiusY="4"/>
+
+                <!-- Активная полоса -->
+                <Rectangle x:Name="VolumeBar"
+                   Grid.ColumnSpan="3"
+                   Fill="#A6E3A1"
+                   HorizontalAlignment="Left"
+                   Width="0" RadiusX="4" RadiusY="4"/>
+
+                <!-- Границы зон -->
+                <Rectangle Grid.Column="1" Width="1" Fill="#45475A" HorizontalAlignment="Left"/>
+                <Rectangle Grid.Column="2" Width="1" Fill="#45475A" HorizontalAlignment="Left"/>
+            </Grid>
+
+            <!-- Усиление микрофона -->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <TextBlock Text="Усиление микрофона:" Foreground="#6C7086"
+                   VerticalAlignment="Center" Margin="0 0 12 0" FontSize="13"/>
+                <Slider x:Name="GainSlider"
+        Minimum="0" Maximum="24" Value="10"
+        Width="160" VerticalAlignment="Center"
+        Foreground="#89B4FA"
+        TickFrequency="6" IsSnapToTickEnabled="False"
+        ValueChanged="GainSlider_ValueChanged"/>
+                <TextBlock x:Name="GainLabel" Text="+10 dB"
+           Foreground="#CDD6F4" FontSize="13"
+           VerticalAlignment="Center" Margin="8 0 0 0"/>
+            </StackPanel>
+
+        </StackPanel>
     </Grid>
 </Page>

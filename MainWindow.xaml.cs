@@ -7,6 +7,10 @@ namespace GuitarToolkit
     {
         public MainWindow()
         {
+            AllocConsole();
+
+            [System.Runtime.InteropServices.DllImport("kernel32.dll")]
+            static extern bool AllocConsole();
             InitializeComponent();
             LoadPages();
         }

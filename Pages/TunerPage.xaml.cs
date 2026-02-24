@@ -24,12 +24,48 @@ namespace GuitarToolkit.Pages
             // Подписка на ноты
             _audio.NoteDetected += OnNoteDetected;
             _audio.Start();
+            _audio.VolumeChanged += OnVolumeChanged;
+        }
+        private void OnVolumeChanged(float volume)
+        {
+            try
+            {
+                Dispatcher.Invoke(() => UpdateVolumeBar(volume));
+            }
+            catch { }
         }
 
+        private void UpdateVolumeBar(float volume)
+        {
+            // RMS 0..1 → ширина 0..320
+            double width = Math.Clamp(volume * 600, 0, 320);
+            VolumeBar.Width = width;
+
+            // Цвет по зонам
+            if (width < 192)       // зелёная зона — до 60%
+                VolumeBar.Fill = new SolidColorBrush(Color.FromRgb(166, 227, 161));
+            else if (width < 272)  // жёлтая — 60-85%
+                VolumeBar.Fill = new SolidColorBrush(Color.FromRgb(249, 226, 175));
+            else                   // красная — выше 85%
+                VolumeBar.Fill = new SolidColorBrush(Color.FromRgb(243, 139, 168));
+        }
+
+        private void GainSlider_ValueChanged(object s, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (_audio == null) return;
+            // dB → линейный множитель: 0dB=1x, 6dB=2x, 12dB=4x, 18dB=8x, 24dB=16x
+            float linear = MathF.Pow(10f, (float)e.NewValue / 20f);
+            _audio.MicGain = linear;
+            if (GainLabel != null) GainLabel.Text = $"+{e.NewValue:F0} dB";
+        }
         // ── Нота получена ─────────────────────────────────────────
         private void OnNoteDetected(string note, float freq, float cents)
         {
-            Dispatcher.Invoke(() => UpdateUI(note, freq, cents));
+            try
+            {
+                Dispatcher.Invoke(() => UpdateUI(note, freq, cents));
+            }
+            catch { }
         }
 
         private void UpdateUI(string note, float freq, float cents)
