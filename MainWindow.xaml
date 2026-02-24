@@ -1,0 +1,48 @@
+﻿<Window x:Class="GuitarToolkit.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Guitar Toolkit" Height="600" Width="800"
+        Background="#1E1E2E" ResizeMode="CanMinimize">
+
+    <Window.Resources>
+        <Style TargetType="TabItem">
+            <Setter Property="Foreground" Value="#CDD6F4"/>
+            <Setter Property="Background" Value="#313244"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Padding" Value="16 8"/>
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="Background" Value="#45475A"/>
+            <Setter Property="Foreground" Value="#CDD6F4"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Padding" Value="12 6"/>
+        </Style>
+        <Style TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#CDD6F4"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <TabControl Background="#1E1E2E" BorderThickness="0"
+                    TabStripPlacement="Left">
+
+            <!-- Тюнер -->
+            <TabItem Header="🎸  Тюнер">
+                <Frame x:Name="TunerFrame" NavigationUIVisibility="Hidden"/>
+            </TabItem>
+
+            <!-- Метроном -->
+            <TabItem Header="🥁  Метроном">
+                <Frame x:Name="MetronomeFrame" NavigationUIVisibility="Hidden"/>
+            </TabItem>
+
+            <!-- Дроун-тон -->
+            <TabItem Header="🔉  Дроун">
+                <Frame x:Name="DroneFrame" NavigationUIVisibility="Hidden"/>
+            </TabItem>
+
+        </TabControl>
+    </Grid>
+</Window>

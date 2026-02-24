@@ -1,0 +1,76 @@
+﻿<Page x:Class="GuitarToolkit.Pages.MetronomePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Background="#1E1E2E">
+
+    <Grid>
+        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center"
+                    Width="400">
+
+            <!-- BPM Display -->
+            <TextBlock x:Name="BpmLabel"
+                       Text="120 BPM"
+                       FontSize="64" FontWeight="Bold"
+                       Foreground="#CDD6F4"
+                       HorizontalAlignment="Center"/>
+
+            <!-- Слайдер BPM -->
+            <Slider x:Name="BpmSlider"
+                    Minimum="20" Maximum="300" Value="120"
+                    TickFrequency="1" IsSnapToTickEnabled="True"
+                    Margin="0 10 0 0"
+                    Foreground="#89B4FA"
+                    ValueChanged="BpmSlider_ValueChanged"/>
+
+            <!-- Метки слайдера -->
+            <Grid Margin="0 4 0 20">
+                <TextBlock Text="20" Foreground="#6C7086" FontSize="11"
+                           HorizontalAlignment="Left"/>
+                <TextBlock Text="300" Foreground="#6C7086" FontSize="11"
+                           HorizontalAlignment="Right"/>
+            </Grid>
+
+            <!-- Визуальные доли -->
+            <ItemsControl x:Name="BeatsPanel"
+                          HorizontalAlignment="Center"
+                          Margin="0 0 0 24">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+
+            <!-- Размер такта -->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"
+                        Margin="0 0 0 24">
+                <TextBlock Text="Долей в такте:" VerticalAlignment="Center"
+                           Margin="0 0 12 0"/>
+                <Button Content="−" Width="36" Height="36"
+                        Click="DecrBeats_Click" FontSize="18"/>
+                <TextBlock x:Name="BeatsLabel" Text="4"
+                           FontSize="22" FontWeight="Bold"
+                           VerticalAlignment="Center"
+                           Margin="16 0" Foreground="#89B4FA"/>
+                <Button Content="+" Width="36" Height="36"
+                        Click="IncrBeats_Click" FontSize="18"/>
+            </StackPanel>
+
+            <!-- Tap Tempo -->
+            <Button x:Name="TapButton"
+                    Content="TAP TEMPO"
+                    Height="52" FontSize="16" FontWeight="Bold"
+                    Foreground="#1E1E2E" Background="#89B4FA"
+                    Margin="0 0 0 16"
+                    Click="TapButton_Click"/>
+
+            <!-- Старт / Стоп -->
+            <Button x:Name="StartStopButton"
+                    Content="▶  СТАРТ"
+                    Height="52" FontSize="16" FontWeight="Bold"
+                    Foreground="#1E1E2E" Background="#A6E3A1"
+                    Click="StartStop_Click"/>
+
+        </StackPanel>
+    </Grid>
+</Page>
