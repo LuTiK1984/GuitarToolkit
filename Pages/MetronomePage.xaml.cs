@@ -20,6 +20,7 @@ namespace GuitarToolkit.Pages
             InitializeComponent();
             _metronome.BeatTick += OnBeat;
             BuildBeatDots(4);
+            VolumeSlider.ValueChanged += (s, e) => _metronome.Volume = (float)e.NewValue;
         }
 
         // ── BPM слайдер ──────────────────────────────────────────
@@ -126,6 +127,7 @@ namespace GuitarToolkit.Pages
             else
             {
                 _metronome.BPM = (int)BpmSlider.Value;
+                _metronome.Volume = (float)VolumeSlider.Value; // ← вот эта строка
                 _metronome.Start();
                 StartStopButton.Content = "⏹  СТОП";
                 StartStopButton.Background = new SolidColorBrush(Color.FromRgb(243, 139, 168));

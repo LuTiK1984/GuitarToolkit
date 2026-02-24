@@ -56,6 +56,17 @@
                         Click="IncrBeats_Click" FontSize="18"/>
             </StackPanel>
 
+            <!-- Громкость -->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"
+            Margin="0 0 0 16">
+                <TextBlock Text="Громкость:" VerticalAlignment="Center"
+               Margin="0 0 12 0"/>
+                <Slider x:Name="VolumeSlider"
+            Minimum="0" Maximum="1" Value="0.8"
+            Width="200" VerticalAlignment="Center"
+            Foreground="#89B4FA"/>
+            </StackPanel>
+
             <!-- Tap Tempo -->
             <Button x:Name="TapButton"
                     Content="TAP TEMPO"

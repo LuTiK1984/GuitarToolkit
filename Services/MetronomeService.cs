@@ -2,6 +2,7 @@
 using System.Timers;
 using Timer = System.Timers.Timer;
 using NAudio.Wave;
+
 namespace GuitarToolkit.Services
 {
     public class MetronomeService : IDisposable
@@ -11,8 +12,9 @@ namespace GuitarToolkit.Services
         private int _beatsPerMeasure = 4;
         private int _currentBeat = 0;
         private bool _isRunning = false;
+        public float Volume { get; set; } = 0.8f;
 
-        public event Action<int> BeatTick; // int — номер доли (0 = акцент)
+        public event Action<int> BeatTick;
 
         public int BPM
         {
@@ -61,16 +63,17 @@ namespace GuitarToolkit.Services
 
         private void OnTick(object sender, System.Timers.ElapsedEventArgs e)
         {
-            PlayClick(_currentBeat == 0);
-            BeatTick?.Invoke(_currentBeat);
+            int beat = _currentBeat;                          // сохраняем ДО инкремента
             _currentBeat = (_currentBeat + 1) % _beatsPerMeasure;
+
+            PlayClick(beat == 0);                             // акцент на нулевой доле
+            BeatTick?.Invoke(beat);                           // UI тоже получает правильный номер
         }
 
         private double BeatInterval() => 60000.0 / _bpm;
 
         private void PlayClick(bool isAccent)
         {
-            // Генерируем синусоиду — без внешних wav-файлов
             float freq = isAccent ? 1000f : 700f;
             int sampleRate = 44100;
             int durationMs = 30;
@@ -80,8 +83,8 @@ namespace GuitarToolkit.Services
             for (int i = 0; i < sampleCount; i++)
             {
                 float t = (float)i / sampleRate;
-                float envelope = 1f - (float)i / sampleCount; // затухание
-                buffer[i] = MathF.Sin(2 * MathF.PI * freq * t) * envelope * 0.8f;
+                float envelope = 1f - (float)i / sampleCount;
+                buffer[i] = MathF.Sin(2 * MathF.PI * freq * t) * envelope * Volume;
             }
 
             var provider = new RawSourceWaveStream(
