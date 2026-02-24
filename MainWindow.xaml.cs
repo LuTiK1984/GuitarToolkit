@@ -16,21 +16,8 @@ namespace GuitarToolkit
             TunerFrame.Navigate(new TunerPage());
             MetronomeFrame.Navigate(new MetronomePage());
             DroneFrame.Navigate(new DronePage());
+            ScalesFrame.Navigate(new ScalesPage());
+            RecorderFrame.Navigate(new RecorderPage());
         }
     }
 }
-
-//GuitarToolkit /
-//├── Pages /
-//│   ├── TunerPage.xaml
-//│   ├── TunerPage.xaml.cs
-//│   ├── MetronomePage.xaml
-//│   ├── MetronomePage.xaml.cs
-//│   ├── DronePage.xaml
-//│   └── DronePage.xaml.cs
-//├── Services /
-//│   ├── AudioService.cs       ← захват микрофона, FFT
-//│   ├── MetronomeService.cs   ← логика метронома
-//│   └── DroneService.cs       ← генерация тона
-//├── MainWindow.xaml
-//└── MainWindow.xaml.cs

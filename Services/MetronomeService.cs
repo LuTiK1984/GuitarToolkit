@@ -2,19 +2,28 @@
 using System.Timers;
 using Timer = System.Timers.Timer;
 using NAudio.Wave;
+using NAudio.Wave.SampleProviders;
 
 namespace GuitarToolkit.Services
 {
     public class MetronomeService : IDisposable
     {
         private Timer _timer;
+        private WaveOutEvent _output;
+        private MixingSampleProvider _mixer;
+
+        private float[] _accentBuffer;
+        private float[] _normalBuffer;
+
         private int _bpm = 120;
         private int _beatsPerMeasure = 4;
         private int _currentBeat = 0;
         private bool _isRunning = false;
-        public float Volume { get; set; } = 0.8f;
 
+        public float Volume { get; set; } = 0.8f;
         public event Action<int> BeatTick;
+
+        private static readonly WaveFormat Format = WaveFormat.CreateIeeeFloatWaveFormat(44100, 1);
 
         public int BPM
         {
@@ -34,9 +43,18 @@ namespace GuitarToolkit.Services
 
         public MetronomeService()
         {
+            _mixer = new MixingSampleProvider(Format) { ReadFully = true };
+            _output = new WaveOutEvent() { DesiredLatency = 100 };
+            _output.Init(_mixer);
+            _output.Play(); // девайс работает постоянно, просто тишина когда нет звука
+
             _timer = new Timer();
             _timer.Elapsed += OnTick;
             _timer.AutoReset = true;
+
+            // Заранее готовим оба клика
+            _accentBuffer = GenerateClick(1000f, 30);
+            _normalBuffer = GenerateClick(700f, 30);
         }
 
         public void Start()
@@ -63,39 +81,44 @@ namespace GuitarToolkit.Services
 
         private void OnTick(object sender, System.Timers.ElapsedEventArgs e)
         {
-            int beat = _currentBeat;                          // сохраняем ДО инкремента
+            int beat = _currentBeat;
             _currentBeat = (_currentBeat + 1) % _beatsPerMeasure;
 
-            PlayClick(beat == 0);                             // акцент на нулевой доле
-            BeatTick?.Invoke(beat);                           // UI тоже получает правильный номер
+            PlayClick(beat == 0);
+            BeatTick?.Invoke(beat);
         }
 
         private double BeatInterval() => 60000.0 / _bpm;
 
         private void PlayClick(bool isAccent)
         {
-            float freq = isAccent ? 1000f : 700f;
-            int sampleRate = 44100;
-            int durationMs = 30;
-            int sampleCount = sampleRate * durationMs / 1000;
+            float[] src = isAccent ? _accentBuffer : _normalBuffer;
 
-            float[] buffer = new float[sampleCount];
-            for (int i = 0; i < sampleCount; i++)
+            // Применяем громкость
+            float[] buf = new float[src.Length];
+            for (int i = 0; i < src.Length; i++)
+                buf[i] = src[i] * Volume;
+
+            // Добавляем в микшер — он воспроизведёт без артефактов
+            var provider = new RawSourceWaveStream(
+                FloatToBytes(buf), 0, buf.Length * 4, Format)
+                .ToSampleProvider();
+
+            _mixer.AddMixerInput(provider);
+        }
+
+        private float[] GenerateClick(float freq, int durationMs)
+        {
+            int sampleRate = 44100;
+            int count = sampleRate * durationMs / 1000;
+            float[] buffer = new float[count];
+            for (int i = 0; i < count; i++)
             {
                 float t = (float)i / sampleRate;
-                float envelope = 1f - (float)i / sampleCount;
-                buffer[i] = MathF.Sin(2 * MathF.PI * freq * t) * envelope * Volume;
+                float envelope = 1f - (float)i / count;
+                buffer[i] = MathF.Sin(2 * MathF.PI * freq * t) * envelope;
             }
-
-            var provider = new RawSourceWaveStream(
-                FloatToBytes(buffer), 0, buffer.Length * 4,
-                WaveFormat.CreateIeeeFloatWaveFormat(sampleRate, 1));
-
-            using var output = new WaveOutEvent();
-            output.Init(provider);
-            output.Play();
-            while (output.PlaybackState == PlaybackState.Playing)
-                System.Threading.Thread.Sleep(1);
+            return buffer;
         }
 
         private byte[] FloatToBytes(float[] samples)
@@ -109,6 +132,8 @@ namespace GuitarToolkit.Services
         {
             Stop();
             _timer.Dispose();
+            _output.Stop();
+            _output.Dispose();
         }
     }
 }
