@@ -77,7 +77,7 @@ namespace GuitarToolkit.Services
             for (int i = 0; i < count; i++)
             {
                 short s16 = BitConverter.ToInt16(e.Buffer, i * 2);
-                float s = s16 / 32768f; // без усиления для RMS
+                float s = s16 / 32768f;
                 _ring[_ringPos & (FftSize - 1)] = s;
                 _ringPos++;
             }
