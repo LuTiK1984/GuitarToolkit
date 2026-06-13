@@ -1,6 +1,8 @@
 param(
-    [string]$Version = "1.5.0",
-    [string]$Configuration = "Release"
+    [string]$Version = "1.8.0",
+    [string]$Configuration = "Release",
+    [string]$CertificateThumbprint = "",
+    [string]$TimestampUrl = "http://timestamp.digicert.com"
 )
 
 $ErrorActionPreference = "Stop"
@@ -51,7 +53,11 @@ $mlTrainerToolFiles = @(
 )
 
 $melodyTransformerToolFiles = @(
+    "context_v3.py",
+    "evaluate_checkpoint.py",
+    "evolve_generation.py",
     "export_onnx.py",
+    "generate_preview.py",
     "generate_synthetic_dataset.py",
     "inspect_checkpoint.py",
     "model.py",
@@ -60,7 +66,9 @@ $melodyTransformerToolFiles = @(
     "sample_dataset.jsonl",
     "train.py",
     "validate_dataset.py",
-    "vocab.json"
+    "vocab.json",
+    "vocab_v2.json",
+    "vocab_v3.json"
 )
 
 Write-Host "== GuitarToolkit release build v$Version =="
@@ -91,6 +99,60 @@ function Assert-File {
     if (-not (Test-Path -LiteralPath $Path)) {
         throw "Required file was not found: $Path"
     }
+}
+
+function Find-SignTool {
+    $kitsRoot = "${env:ProgramFiles(x86)}\Windows Kits\10\bin"
+    if (Test-Path -LiteralPath $kitsRoot) {
+        $candidate = Get-ChildItem -LiteralPath $kitsRoot -Recurse -Filter signtool.exe -ErrorAction SilentlyContinue |
+            Where-Object { $_.FullName -like "*\x64\signtool.exe" } |
+            Sort-Object FullName -Descending |
+            Select-Object -First 1
+        if ($candidate) {
+            return $candidate.FullName
+        }
+    }
+
+    $command = Get-Command signtool.exe -ErrorAction SilentlyContinue
+    if ($command) {
+        return $command.Source
+    }
+
+    return $null
+}
+
+function Sign-ReleaseFile {
+    param(
+        [string]$Path,
+        [string]$SignTool
+    )
+
+    if ([string]::IsNullOrWhiteSpace($CertificateThumbprint)) {
+        return
+    }
+
+    Write-Host "Signing $Path"
+    & $SignTool sign /fd SHA256 /sha1 $CertificateThumbprint /tr $TimestampUrl /td SHA256 $Path
+    if ($LASTEXITCODE -ne 0) {
+        throw "signtool failed for $Path"
+    }
+}
+
+function Sign-ReleaseDirectory {
+    param([string]$Path)
+
+    if ([string]::IsNullOrWhiteSpace($CertificateThumbprint)) {
+        return
+    }
+
+    $signTool = Find-SignTool
+    if (-not $signTool) {
+        throw "CertificateThumbprint was provided, but signtool.exe was not found."
+    }
+
+    Get-ChildItem -LiteralPath $Path -Recurse -File |
+        Where-Object { $_.Extension -in ".exe", ".dll", ".vst3" } |
+        ForEach-Object { Sign-ReleaseFile -Path $_.FullName -SignTool $signTool }
 }
 
 function Copy-ReleaseDocs {
@@ -138,11 +200,13 @@ Write-Host
 Write-Host "Creating desktop archive..."
 Copy-Item -Path (Join-Path $desktopOut "*") -Destination $desktopPackage -Recurse -Force
 Copy-ReleaseDocs -Destination $desktopPackage
+Sign-ReleaseDirectory -Path $desktopPackage
 Compress-Archive -Path (Join-Path $desktopPackage "*") -DestinationPath $desktopZip -Force
 
 Write-Host "Creating VST3 archive..."
 Copy-Item -Path (Join-Path $pluginOut "*") -Destination $pluginPackage -Recurse -Force
 Copy-ReleaseDocs -Destination $pluginPackage
+Sign-ReleaseDirectory -Path $pluginPackage
 Compress-Archive -Path (Join-Path $pluginPackage "*") -DestinationPath $pluginZip -Force
 
 Write-Host "Creating ML Trainer archive..."
@@ -171,11 +235,29 @@ foreach ($fileName in $melodyTransformerToolFiles) {
     }
 }
 Copy-ReleaseDocs -Destination $trainerPackage
+Sign-ReleaseDirectory -Path $trainerPackage
 Compress-Archive -Path (Join-Path $trainerPackage "*") -DestinationPath $trainerZip -Force
 
 Write-Host
 Write-Host "Release artifacts:"
 Get-Item $desktopZip, $pluginZip, $trainerZip | Format-Table Name, Length, LastWriteTime
+
+$checksumsPath = Join-Path $releaseDir "SHA256SUMS.txt"
+$hashLines = foreach ($artifact in Get-Item $desktopZip, $pluginZip, $trainerZip) {
+    $hash = Get-FileHash -Algorithm SHA256 -LiteralPath $artifact.FullName
+    "{0}  {1}" -f $hash.Hash.ToLowerInvariant(), $artifact.Name
+}
+$hashLines | Set-Content -LiteralPath $checksumsPath -Encoding utf8
+
+foreach ($artifact in Get-Item $desktopZip, $pluginZip, $trainerZip) {
+    $hash = Get-FileHash -Algorithm SHA256 -LiteralPath $artifact.FullName
+    $sidecar = "$($artifact.FullName).sha256"
+    "{0}  {1}" -f $hash.Hash.ToLowerInvariant(), $artifact.Name | Set-Content -LiteralPath $sidecar -Encoding utf8
+}
+
+Write-Host
+Write-Host "SHA-256 checksums:"
+Get-Content -LiteralPath $checksumsPath
 
 Write-Host
 Write-Host "Done."

@@ -5,13 +5,13 @@ This is the first local training skeleton for the future GuitarToolkit melody/ri
 The model does not generate audio. It generates symbolic phrase tokens, for example:
 
 ```text
-D:b3:1/8
+D:b3:4:1/8
 R:1/8
 ```
 
 Meaning:
 
-- `D:b3:1/8` - play scale degree `b3` for one eighth note;
+- `D:b3:4:1/8` - play scale degree `b3` in octave `4` for one eighth note;
 - `R:1/8` - rest for one eighth note.
 
 GuitarToolkit will later map these tokens to real notes, fretboard positions, playback, and MIDI/export tools.
@@ -21,7 +21,7 @@ GuitarToolkit will later map these tokens to real notes, fretboard positions, pl
 JSONL: one phrase per line.
 
 ```json
-{"style":"STYLE_METAL","mode":"MODE_NATURAL_MINOR","mood":"MOOD_DARK","meter":"METER_4_4","bars":2,"progression":["i","VI"],"tokens":["<BOS>","D:1:1/8","D:b3:1/8","<EOS>"]}
+{"style":"STYLE_METAL","mode":"MODE_NATURAL_MINOR","mood":"MOOD_DARK","meter":"METER_4_4","bars":2,"profile":"PROFILE_RIFF","density":"DENSITY_MEDIUM","contour":"CONTOUR_ARCH","note_count":"NOTE_COUNT_8_12","progression":["i","VI"],"tokens":["<BOS>","D:1:4:1/8","D:b3:4:1/8","<EOS>"],"positions":["POS_OFFGRID","POS_BAR_START","POS_WEAK_BEAT","POS_BAR_END"],"sections":["SECTION_BEGIN","SECTION_BEGIN","SECTION_BEGIN","SECTION_END"]}
 ```
 
 Important fields:
@@ -31,8 +31,13 @@ Important fields:
 - `mood` - emotional target.
 - `meter` - phrase meter: `METER_4_4`, `METER_3_4`, or `METER_6_8`.
 - `bars` - phrase length: `1`, `2`, or `4`.
+- `profile` - phrase behavior target: balanced, sparse, hook, riff, ambient, or call/response.
+- `density` - expected phrase density.
+- `contour` - melodic shape: rise, fall, arch, or static.
+- `note_count` - coarse note-count bucket.
 - `progression` - optional chord context.
 - `tokens` - phrase tokens with `<BOS>` and `<EOS>`.
+- `positions` and `sections` - per-token musical position hints used as dynamic training context.
 
 ## First smoke run
 
@@ -40,7 +45,7 @@ Important fields:
 cd tools\ml\melody_phrase_transformer
 python generate_synthetic_dataset.py --output synthetic_melody_dataset.jsonl --count 5000
 python validate_dataset.py --dataset synthetic_melody_dataset.jsonl
-python train.py --dataset synthetic_melody_dataset.jsonl --epochs 10 --batch-size 64
+python train.py --dataset synthetic_melody_dataset.jsonl --vocab vocab_v3.json --epochs 10 --batch-size 256 --amp
 python inspect_checkpoint.py --checkpoint runs\melody_phrase_transformer\best_model.pt
 python export_onnx.py --checkpoint runs\melody_phrase_transformer\best_model.pt
 ```
@@ -48,13 +53,13 @@ python export_onnx.py --checkpoint runs\melody_phrase_transformer\best_model.pt
 If training is slow, try:
 
 ```powershell
-python train.py --dataset synthetic_melody_dataset.jsonl --epochs 10 --batch-size 128 --learning-rate 0.0003
+python train.py --dataset synthetic_melody_dataset.jsonl --vocab vocab_v3.json --epochs 10 --batch-size 1024 --learning-rate 0.0003 --amp
 ```
 
 If CUDA memory is tight, lower batch size:
 
 ```powershell
-python train.py --dataset synthetic_melody_dataset.jsonl --epochs 10 --batch-size 32
+python train.py --dataset synthetic_melody_dataset.jsonl --vocab vocab_v3.json --epochs 10 --batch-size 128
 ```
 
 ## How to read progress
@@ -68,12 +73,13 @@ For melodies, exact `acc` is naturally harder than for progressions because ther
 
 ## What counts as a first win
 
-This first version is a pipeline win, not a final music-quality win:
+This version is still trained on synthetic phrases, so the first win is controlled musical behavior rather than finished composer quality:
 
 - dataset validates;
 - training finishes;
 - checkpoint inspection returns phrase tokens;
 - ONNX export succeeds;
 - generated durations can be checked against meter/bar length.
+- evaluation shows healthy phrase-life, interval, octave, mood, and style scores.
 
-After that, the real work is improving the dataset rules and later connecting the ONNX model to the Melody tab.
+The ONNX model is connected to the Melody tab through the ML Trainer install action. Further work focuses on dataset quality, phrase structure, octave/interval behavior, and more reliable musical evaluation.

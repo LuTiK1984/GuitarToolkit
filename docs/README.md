@@ -30,6 +30,7 @@ This directory contains extended documentation for GuitarToolkit. The main proje
 | [Repository Presentation](maintainer/REPOSITORY_PRESENTATION.md) | Ready-to-use About text, topics, pinned posts, and release descriptions. |
 | [Discussions Guide](maintainer/DISCUSSIONS.md) | GitHub Discussions setup and category guidance. |
 | [Inspiration Engine Model](maintainer/INSPIRATION_ENGINE_MODEL.md) | ONNX-first generation contract, model location, and training workflow. |
+| [UI Prototype](maintainer/ui-prototype/index.html) | Local HTML prototype for the next GuitarToolkit interface direction. |
 
 ## Release documentation
 
@@ -100,6 +101,7 @@ Some project files intentionally stay in the repository root because GitHub expe
 | [GitHub Settings](maintainer/GITHUB_SETTINGS.md) | Настройки GitHub UI, expected checks и troubleshooting external checks. |
 | [Repository Presentation](maintainer/REPOSITORY_PRESENTATION.md) | Готовые тексты About, topics, pinned posts и release descriptions. |
 | [Discussions Guide](maintainer/DISCUSSIONS.md) | Настройка GitHub Discussions и категорий. |
+| [UI Prototype](maintainer/ui-prototype/index.html) | Локальный HTML-прототип следующего направления интерфейса GuitarToolkit. |
 
 ## Релизная документация
 

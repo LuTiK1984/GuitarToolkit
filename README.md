@@ -31,7 +31,7 @@ For installation details, use the [Quick Start guide](docs/user/QUICK_START.md).
 - Circle of fifths with related keys, diatonic chords, and common progressions.
 - Tabs viewer for Guitar Pro / MusicXML files through alphaTab, including GP3, GP4, GP5/GPX, and MusicXML when supported by the importer.
 - Inspiration Engine for local ONNX progression ideas, plus a separate ML Trainer utility for dataset generation, training, checkpoint comparison, ONNX export, and model installation.
-- Melody tab placeholder for the planned short-phrase Transformer model.
+- Melody sketchbook with local ONNX Transformer generation, backing progressions, synchronized playback, editable notes, and a three-octave piano.
 - Dark and light themes.
 
 ## Screenshots
@@ -53,8 +53,9 @@ More screenshots are stored in [docs/images](docs/images/).
 | Desktop app | Usable on Windows 10/11 x64 |
 | VST3 plugin | Usable, with DAW compatibility still being collected |
 | Tabs viewer | Active development; alphaTab import limits may apply |
-| Inspiration Engine | Experimental local ONNX workflow |
-| ML Trainer | Separate utility for training and comparing local models |
+| Inspiration Engine | Local ONNX progression generation and playback |
+| Melody sketchbook | Local ONNX short-phrase generation with editable playback |
+| ML Trainer | Separate utility for training, evaluating, comparing, exporting, and installing local models |
 | Platform | Windows-only for now |
 
 ## Documentation

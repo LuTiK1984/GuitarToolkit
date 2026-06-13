@@ -95,6 +95,10 @@
                                     Style="{StaticResource PrimaryButton}"
                                     Margin="0 0 0 8"
                                     Click="GitHub_Click"/>
+                            <Button Content="MIT License"
+                                    Style="{StaticResource SecondaryButton}"
+                                    Margin="0 0 0 8"
+                                    Click="License_Click"/>
                             <Button Content="Открыть логи"
                                     Style="{StaticResource SecondaryButton}"
                                     Click="Logs_Click"/>
@@ -160,6 +164,9 @@
 
                     <StackPanel Grid.Column="1">
                         <TextBlock Text="Примечания" Style="{StaticResource SectionTitle}"/>
+                        <TextBlock Text="GuitarToolkit is released under the MIT License. The full LICENSE file is included with every release package."
+                                   Style="{StaticResource MutedText}"
+                                   Margin="0 0 0 10"/>
                         <TextBlock Text="VST is a trademark of Steinberg Media Technologies GmbH. Third-party libraries belong to their respective authors."
                                    Style="{StaticResource MutedText}"/>
                     </StackPanel>

@@ -7,6 +7,8 @@ from pathlib import Path
 import torch
 from torch import nn
 
+from context_v3 import OPTIONAL_CONTEXT_KEYS
+
 
 @dataclass(frozen=True)
 class MelodyVocabulary:
@@ -14,6 +16,7 @@ class MelodyVocabulary:
     id_to_token: list[str]
     phrase_tokens: list[str]
     progression_tokens: list[str]
+    extra_context_tokens: list[str]
 
     @property
     def pad_id(self) -> int:
@@ -30,6 +33,11 @@ class MelodyVocabulary:
     @classmethod
     def load(cls, path: str | Path) -> "MelodyVocabulary":
         data = json.loads(Path(path).read_text(encoding="utf-8"))
+        extra_context_tokens = [
+            token
+            for key in OPTIONAL_CONTEXT_KEYS
+            for token in data.get(key, [])
+        ]
         tokens = (
             data["special_tokens"]
             + data["style_tokens"]
@@ -37,6 +45,7 @@ class MelodyVocabulary:
             + data["mood_tokens"]
             + data["meter_tokens"]
             + data["bar_tokens"]
+            + extra_context_tokens
             + data["progression_tokens"]
             + data["phrase_tokens"]
         )
@@ -45,6 +54,7 @@ class MelodyVocabulary:
             id_to_token=tokens,
             phrase_tokens=data["phrase_tokens"],
             progression_tokens=data["progression_tokens"],
+            extra_context_tokens=extra_context_tokens,
         )
 
     def encode(self, token: str) -> int:

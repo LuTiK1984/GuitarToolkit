@@ -4,12 +4,39 @@ All notable changes to GuitarToolkit are documented here.
 
 ## [Unreleased]
 
+## [1.8.0] - 2026-06-13
+
 ### Added
 
 - Added ML Trainer model comparison, evaluation history, and a wider full checkpoint prompt suite for more objective model selection.
 - Added a mood-targeted synthetic dataset profile and a dataset file picker in ML Trainer for focused mood fine-tuning.
 - Added a Melody tab placeholder for the future short-phrase Transformer model.
 - Added the first command-line Melody Phrase Transformer training skeleton with dataset generation, validation, checkpoint inspection, and ONNX export.
+- Added full Melody Transformer workflow support to ML Trainer, including dataset controls, training progress, checkpoint inspection, evaluation, and ONNX export.
+- Added Melody Transformer checkpoint evaluation metrics for diversity, musical fit, mood fit, style/rhythm fit, confidence balance, entropy, and top-3 mass.
+- Added Melody Transformer musical constraint penalties for mode, mood, style durations, and entropy balance during training.
+- Added Melody Transformer WAV preview generation from ML Trainer for quick listening checks.
+- Added Melody Transformer generation training that runs multiple candidate recipes, evaluates them, and preserves theoretical, balanced, and art-house champions.
+- Added runtime Melody Transformer ONNX inference in the main app, with a finished Melody tab for generating, displaying, and auditioning short phrases.
+- Added an ML Trainer install button that copies Melody Transformer ONNX and vocabulary files into the app runtime model folder.
+- Added Melody tab sketchbook controls for chip-based backing progressions, separate/together playback, generated note display, piano-key highlighting, and basic melody edits.
+- Added Melody tab BPM and volume controls, synchronized progression/melody playback, clickable piano input, keyboard note hotkeys, and a compact-window horizontal overflow guard.
+- Added Melody piano free-play/record mode and made the piano plus generated playback use the selected tonic as the start of one continuous working octave.
+- Reworked the Melody piano into a fixed C-based three-octave keyboard with center-octave hotkeys, restored an always reachable stop button, and themed the progression-add menu.
+- Improved Melody tab piano ergonomics, note preview sustain, and single-press hotkey playback to avoid repeated crackling when keys are held.
+- Added Melody Transformer v2 training support with octave-aware melody tokens, interval/octave behavior penalties, v2 evaluation metrics, and ML Trainer vocabulary selection.
+- Added ML Trainer controls for Melody v2 architecture, interval/octave penalties, DataLoader workers, and AMP mixed-precision training.
+- Fixed Melody v2 DataLoader worker startup on Windows and added clearer checkpoint/vocabulary mismatch diagnostics.
+- Optimized Melody v2 training by precomputing constraint, interval, and octave penalty tables for large-batch GPU runs.
+- Added Melody v2 anti-repeat, anti-rest, and anti-duration training penalties plus expanded generated-prompt evaluation metrics.
+- Improved Melody runtime generation by feeding a longer phrase history to ONNX and applying musical sampling guards against note/rest/rhythm spam.
+- Fixed Melody ONNX export/runtime sequence length alignment and left-padded melody history so the model sees the latest real token instead of padding.
+- Tuned Melody runtime duration guards to reduce dense short-note runs in longer generated phrases.
+- Fixed Melody generation during playback by stopping the active preview and highlighting a snapshot of the phrase instead of the editable live list.
+- Fixed mojibake in Melody model status messages.
+- Added Melody Transformer v3 dataset/vocabulary support with phrase profiles, density, contour, note-count, phrase-section, and beat-position context tokens while keeping the output melody token set stable.
+- Added SHA-256 checksum generation for release archives and optional Authenticode signing support in the release script.
+- Added a visible MIT License link and license note to the Windows About view.
 
 ### Fixed
 
@@ -18,6 +45,7 @@ All notable changes to GuitarToolkit are documented here.
 - Fixed the Inspiration tab compact layout so the sampling controls stay in their own column.
 - Fixed desktop resize tracking so the custom window chrome respects the minimum size.
 - Increased the desktop minimum height so the tuner string row is visible at startup.
+- Fixed Melody Transformer runtime inference for the current ONNX export shape so generated phrases fall back less often and avoid long reshape errors in the UI.
 
 ## [1.7.0] - 2026-05-08
 

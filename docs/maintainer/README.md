@@ -11,6 +11,7 @@ This section contains documentation for maintaining the GitHub project and repos
 - [GitHub Settings](GITHUB_SETTINGS.md) - repository UI settings, expected checks, and external check troubleshooting.
 - [Repository Presentation](REPOSITORY_PRESENTATION.md) - About text, topics, pinned posts, and release descriptions.
 - [Inspiration Engine Model](INSPIRATION_ENGINE_MODEL.md) - ONNX-first generation contract, model location, and training workflow.
+- [UI Prototype](ui-prototype/index.html) - local HTML prototype for the next GuitarToolkit interface direction.
 
 ## Workflow and governance
 
@@ -35,6 +36,7 @@ This section contains documentation for maintaining the GitHub project and repos
 - [Project Structure](PROJECT_STRUCTURE.md) - где должны лежать файлы и что не нужно коммитить.
 - [GitHub Settings](GITHUB_SETTINGS.md) - настройки GitHub UI, expected checks и troubleshooting external checks.
 - [Repository Presentation](REPOSITORY_PRESENTATION.md) - About text, topics, pinned posts и release descriptions.
+- [UI Prototype](ui-prototype/index.html) - локальный HTML-прототип следующего направления интерфейса GuitarToolkit.
 
 ## Workflow и правила
 

@@ -20,6 +20,7 @@ public sealed class TrainerForm : Form
 
     private readonly TextBox _pythonBox = new() { Text = "python" };
     private readonly TextBox _progressionRootBox = new();
+    private readonly TextBox _melodyRootBox = new();
     private readonly TextBox _logBox = new();
     private readonly ListView _epochList = new();
     private readonly TextBox _previewBox = new();
@@ -45,6 +46,8 @@ public sealed class TrainerForm : Form
     private readonly ProgressBar _trainProgress = new() { Minimum = 0, Maximum = 1000, Dock = DockStyle.Top, Height = 18 };
     private readonly Label _progressLabel = new() { Text = "Прогресс эпохи: ожидание запуска", AutoSize = true };
     private readonly ToolTip _toolTip = new();
+    private ProgressBar? _activeProgressBar;
+    private Label? _activeProgressLabel;
 
     private readonly TextBox _checkpointBox = new() { Text = @"runs\progression_gui\best_model.pt" };
     private readonly TextBox _promptsBox = new() { Text = "eval_prompts_full.jsonl" };
@@ -56,6 +59,53 @@ public sealed class TrainerForm : Form
     private readonly ComboBox _modeBox = new() { DropDownStyle = ComboBoxStyle.DropDownList };
     private readonly ComboBox _moodBox = new() { DropDownStyle = ComboBoxStyle.DropDownList };
 
+    private readonly TextBox _melodyDatasetBox = new() { Text = "synthetic_melody_dataset_gui.jsonl" };
+    private readonly TextBox _melodyVocabBox = new() { Text = "vocab_v3.json" };
+    private readonly NumericUpDown _melodyDatasetCountBox = new() { Minimum = 100, Maximum = 1_000_000, Value = 100000, Increment = 1000 };
+    private readonly NumericUpDown _melodySeedBox = new() { Minimum = 1, Maximum = 999999, Value = 1984 };
+    private readonly TextBox _melodyOutputDirBox = new() { Text = @"runs\melody_v3_gui" };
+    private readonly TextBox _melodyResumeBox = new();
+    private readonly NumericUpDown _melodyEpochsBox = new() { Minimum = 1, Maximum = 500, Value = 30 };
+    private readonly NumericUpDown _melodyBatchBox = new() { Minimum = 1, Maximum = 4096, Value = 2048 };
+    private readonly NumericUpDown _melodyLearningRateBox = new() { DecimalPlaces = 5, Minimum = 0.00001M, Maximum = 1, Increment = 0.00005M, Value = 0.00030M };
+    private readonly NumericUpDown _melodyLabelSmoothingBox = new() { DecimalPlaces = 3, Minimum = 0, Maximum = 0.5M, Increment = 0.005M, Value = 0.020M };
+    private readonly NumericUpDown _melodyModePenaltyBox = new() { DecimalPlaces = 3, Minimum = 0, Maximum = 2, Increment = 0.025M, Value = 0.120M };
+    private readonly NumericUpDown _melodyMoodPenaltyBox = new() { DecimalPlaces = 3, Minimum = 0, Maximum = 2, Increment = 0.025M, Value = 0.080M };
+    private readonly NumericUpDown _melodyStylePenaltyBox = new() { DecimalPlaces = 3, Minimum = 0, Maximum = 2, Increment = 0.025M, Value = 0.060M };
+    private readonly NumericUpDown _melodyEntropyPenaltyBox = new() { DecimalPlaces = 3, Minimum = 0, Maximum = 1, Increment = 0.005M, Value = 0.015M };
+    private readonly NumericUpDown _melodyIntervalPenaltyBox = new() { DecimalPlaces = 3, Minimum = 0, Maximum = 2, Increment = 0.025M, Value = 0.100M };
+    private readonly NumericUpDown _melodyOctavePenaltyBox = new() { DecimalPlaces = 3, Minimum = 0, Maximum = 2, Increment = 0.025M, Value = 0.060M };
+    private readonly NumericUpDown _melodyRepeatPenaltyBox = new() { DecimalPlaces = 3, Minimum = 0, Maximum = 2, Increment = 0.025M, Value = 0.120M };
+    private readonly NumericUpDown _melodyRestPenaltyBox = new() { DecimalPlaces = 3, Minimum = 0, Maximum = 2, Increment = 0.025M, Value = 0.100M };
+    private readonly NumericUpDown _melodyDurationPenaltyBox = new() { DecimalPlaces = 3, Minimum = 0, Maximum = 2, Increment = 0.025M, Value = 0.060M };
+    private readonly NumericUpDown _melodyEmbeddingSizeBox = new() { Minimum = 32, Maximum = 1024, Increment = 32, Value = 128 };
+    private readonly NumericUpDown _melodyHeadsBox = new() { Minimum = 1, Maximum = 16, Value = 4 };
+    private readonly NumericUpDown _melodyLayersBox = new() { Minimum = 1, Maximum = 12, Value = 3 };
+    private readonly NumericUpDown _melodyFeedforwardSizeBox = new() { Minimum = 64, Maximum = 4096, Increment = 64, Value = 512 };
+    private readonly NumericUpDown _melodyDropoutBox = new() { DecimalPlaces = 2, Minimum = 0, Maximum = 0.8M, Increment = 0.05M, Value = 0.10M };
+    private readonly NumericUpDown _melodyNumWorkersBox = new() { Minimum = 0, Maximum = 16, Value = 2 };
+    private readonly NumericUpDown _melodyProgressEveryBox = new() { Minimum = 0, Maximum = 10000, Value = 10, Increment = 10 };
+    private readonly CheckBox _melodyResetOptimizerBox = new() { Text = "Начать с новым optimizer при дообучении", Checked = true, AutoSize = true };
+    private readonly CheckBox _melodyCpuBox = new() { Text = "Отключить GPU и обучать на CPU", AutoSize = true };
+    private readonly CheckBox _melodyAmpBox = new() { Text = "AMP / mixed precision на GPU", Checked = true, AutoSize = true };
+    private readonly ProgressBar _melodyTrainProgress = new() { Minimum = 0, Maximum = 1000, Dock = DockStyle.Top, Height = 18 };
+    private readonly Label _melodyProgressLabel = new() { Text = "Прогресс эпохи: ожидание запуска", AutoSize = true };
+    private readonly TextBox _melodyCheckpointBox = new() { Text = @"runs\melody_v3_gui\best_model.pt" };
+    private readonly TextBox _melodyPreviousBox = new() { Text = "<BOS>,D:1:4:1/8,D:b3:4:1/8" };
+    private readonly ComboBox _melodyStyleBox = new() { DropDownStyle = ComboBoxStyle.DropDownList };
+    private readonly ComboBox _melodyModeBox = new() { DropDownStyle = ComboBoxStyle.DropDownList };
+    private readonly ComboBox _melodyMoodBox = new() { DropDownStyle = ComboBoxStyle.DropDownList };
+    private readonly ComboBox _melodyMeterBox = new() { DropDownStyle = ComboBoxStyle.DropDownList };
+    private readonly NumericUpDown _melodyBarsBox = new() { Minimum = 1, Maximum = 4, Value = 2 };
+    private readonly TextBox _melodyProgressionBox = new() { Text = "i,VI" };
+    private readonly NumericUpDown _melodyPreviewBpmBox = new() { Minimum = 40, Maximum = 260, Value = 100 };
+    private readonly NumericUpDown _melodyPreviewTemperatureBox = new() { DecimalPlaces = 2, Minimum = 0.05M, Maximum = 2, Increment = 0.05M, Value = 0.85M };
+    private readonly NumericUpDown _melodyPreviewTopKBox = new() { Minimum = 1, Maximum = 32, Value = 8 };
+    private readonly TextBox _melodyGenerationOutputBox = new() { Text = @"runs\melody_generations" };
+    private readonly NumericUpDown _melodyGenerationBox = new() { Minimum = 1, Maximum = 999, Value = 1 };
+    private readonly NumericUpDown _melodyPopulationBox = new() { Minimum = 1, Maximum = 8, Value = 6 };
+    private readonly NumericUpDown _melodyGenerationEpochsBox = new() { Minimum = 1, Maximum = 100, Value = 8 };
+
     public TrainerForm()
     {
         Text = "GuitarToolkit ML Trainer";
@@ -63,6 +113,7 @@ public sealed class TrainerForm : Form
         StartPosition = FormStartPosition.CenterScreen;
 
         _progressionRootBox.Text = FindProgressionRoot();
+        _melodyRootBox.Text = FindMelodyRoot();
         _profileBox.Items.AddRange(["focused", "balanced", "diverse", "mood"]);
         _profileBox.SelectedItem = "mood";
         _styleBox.Items.AddRange(["STYLE_METAL", "STYLE_ROCK", "STYLE_POP", "STYLE_AMBIENT", "STYLE_BLUES"]);
@@ -71,6 +122,14 @@ public sealed class TrainerForm : Form
         _modeBox.SelectedItem = "MODE_NATURAL_MINOR";
         _moodBox.Items.AddRange(["MOOD_DARK", "MOOD_EPIC", "MOOD_BRIGHT", "MOOD_CALM", "MOOD_TENSE"]);
         _moodBox.SelectedItem = "MOOD_DARK";
+        _melodyStyleBox.Items.AddRange(["STYLE_METAL", "STYLE_ROCK", "STYLE_POP", "STYLE_AMBIENT", "STYLE_BLUES"]);
+        _melodyStyleBox.SelectedItem = "STYLE_METAL";
+        _melodyModeBox.Items.AddRange(["MODE_NATURAL_MINOR", "MODE_MAJOR", "MODE_DORIAN", "MODE_PHRYGIAN", "MODE_HARMONIC_MINOR"]);
+        _melodyModeBox.SelectedItem = "MODE_NATURAL_MINOR";
+        _melodyMoodBox.Items.AddRange(["MOOD_DARK", "MOOD_EPIC", "MOOD_BRIGHT", "MOOD_CALM", "MOOD_TENSE"]);
+        _melodyMoodBox.SelectedItem = "MOOD_DARK";
+        _melodyMeterBox.Items.AddRange(["METER_4_4", "METER_3_4", "METER_6_8"]);
+        _melodyMeterBox.SelectedItem = "METER_4_4";
         ConfigureToolTips();
 
         Controls.Add(BuildLayout());
@@ -87,7 +146,7 @@ public sealed class TrainerForm : Form
     {
         var tabs = new TabControl { Dock = DockStyle.Fill };
         tabs.TabPages.Add(BuildProgressionTab());
-        tabs.TabPages.Add(BuildMelodyTransformerTab());
+        tabs.TabPages.Add(BuildMelodyTransformerTrainerTab());
         tabs.TabPages.Add(BuildSettingsTab());
 
         var root = new TableLayoutPanel
@@ -221,10 +280,116 @@ public sealed class TrainerForm : Form
         var panel = Panel("Пути");
         AddRow(panel, "Python", _pythonBox);
         AddRow(panel, "Progression tools", _progressionRootBox);
+        AddRow(panel, "Melody tools", _melodyRootBox);
         AddButtonRow(panel, Button("Проверить GPU", CheckGpu_Click), Button("Открыть tools", OpenTools_Click));
         panel.Controls.Add(Note("Если CUDA подключена правильно, проверка GPU покажет torch.cuda.is_available() = True и имя видеокарты."));
         page.Controls.Add(panel);
         return page;
+    }
+
+    private TabPage BuildMelodyTransformerTrainerTab()
+    {
+        var page = new TabPage("Melody Transformer");
+        var columns = new TableLayoutPanel
+        {
+            Dock = DockStyle.Fill,
+            ColumnCount = 3,
+            RowCount = 1,
+            Padding = new Padding(8)
+        };
+        columns.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33));
+        columns.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 34));
+        columns.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33));
+
+        columns.Controls.Add(BuildMelodyDatasetPanel(), 0, 0);
+        columns.Controls.Add(BuildMelodyTrainingPanel(), 1, 0);
+        columns.Controls.Add(BuildMelodyEvaluationPanel(), 2, 0);
+        page.Controls.Add(columns);
+        return page;
+    }
+
+    private Control BuildMelodyDatasetPanel()
+    {
+        var panel = Panel("Датасет мелодий");
+        AddRow(panel, "Файл", _melodyDatasetBox);
+        AddRow(panel, "Vocab", _melodyVocabBox);
+        AddRow(panel, "Количество", _melodyDatasetCountBox);
+        AddRow(panel, "Seed", _melodySeedBox);
+        AddButtonRow(panel,
+            Button("Сгенерировать", MelodyGenerateDataset_Click),
+            Button("Проверить", MelodyValidateDataset_Click),
+            Button("Превью", MelodyPreviewDataset_Click),
+            Button("Выбрать файл", MelodyBrowseDataset_Click));
+
+        panel.Controls.Add(Note("Это датасет коротких фраз: стиль, лад, настроение, размер, длина и опорная прогрессия на входе; токены нот, пауз и длительностей на выходе."));
+        return panel;
+    }
+
+    private Control BuildMelodyTrainingPanel()
+    {
+        var panel = Panel("Обучение Transformer");
+        AddRow(panel, "Output dir", _melodyOutputDirBox);
+        AddRow(panel, "Resume", _melodyResumeBox);
+        AddRow(panel, "Эпохи", _melodyEpochsBox);
+        AddRow(panel, "Batch", _melodyBatchBox);
+        AddRow(panel, "Learning rate", _melodyLearningRateBox);
+        AddRow(panel, "Label smoothing", _melodyLabelSmoothingBox);
+        AddRow(panel, "Штраф вне лада", _melodyModePenaltyBox);
+        AddRow(panel, "Штраф вне настроения", _melodyMoodPenaltyBox);
+        AddRow(panel, "Штраф вне стиля", _melodyStylePenaltyBox);
+        AddRow(panel, "Штраф размазанности", _melodyEntropyPenaltyBox);
+        AddRow(panel, "Штраф скачков интервала", _melodyIntervalPenaltyBox);
+        AddRow(panel, "Штраф странной октавы", _melodyOctavePenaltyBox);
+        AddRow(panel, "Anti-repeat penalty", _melodyRepeatPenaltyBox);
+        AddRow(panel, "Anti-rest penalty", _melodyRestPenaltyBox);
+        AddRow(panel, "Anti-duration penalty", _melodyDurationPenaltyBox);
+        AddRow(panel, "Embedding", _melodyEmbeddingSizeBox);
+        AddRow(panel, "Heads", _melodyHeadsBox);
+        AddRow(panel, "Layers", _melodyLayersBox);
+        AddRow(panel, "Feedforward", _melodyFeedforwardSizeBox);
+        AddRow(panel, "Dropout", _melodyDropoutBox);
+        AddRow(panel, "Data workers", _melodyNumWorkersBox);
+        AddRow(panel, "Показывать прогресс каждые N batches", _melodyProgressEveryBox);
+        panel.Controls.Add(_melodyResetOptimizerBox);
+        panel.Controls.Add(_melodyCpuBox);
+        panel.Controls.Add(_melodyAmpBox);
+        panel.Controls.Add(_melodyProgressLabel);
+        panel.Controls.Add(_melodyTrainProgress);
+        AddButtonRow(panel, Button("Старт", MelodyTrain_Click), Button("Стоп", Stop_Click), Button("Открыть runs", MelodyOpenRuns_Click));
+
+        panel.Controls.Add(Note("Штрафы учат модель не раздавать вероятность плохим токенам. Стартуй мягко: лад 0.12, mood 0.08, стиль 0.06, размазанность 0.025."));
+        AddRow(panel, "Папка поколений", _melodyGenerationOutputBox);
+        AddRow(panel, "Номер поколения", _melodyGenerationBox);
+        AddRow(panel, "Кандидатов", _melodyPopulationBox);
+        AddRow(panel, "Эпох на кандидата", _melodyGenerationEpochsBox);
+        AddButtonRow(panel, Button("Запустить поколение", MelodyEvolveGeneration_Click));
+        panel.Controls.Add(Note("Поколение обучает несколько кандидатов, проводит экзамен и сохраняет трех чемпионов: theoretical, balanced и art_house. Balanced автоматически станет Resume для следующего круга."));
+        return panel;
+    }
+
+    private Control BuildMelodyEvaluationPanel()
+    {
+        var panel = Panel("Проверка и экспорт");
+        AddRow(panel, "Checkpoint", _melodyCheckpointBox);
+        AddRow(panel, "Previous", _melodyPreviousBox);
+        AddRow(panel, "Style", _melodyStyleBox);
+        AddRow(panel, "Mode", _melodyModeBox);
+        AddRow(panel, "Mood", _melodyMoodBox);
+        AddRow(panel, "Meter", _melodyMeterBox);
+        AddRow(panel, "Bars", _melodyBarsBox);
+        AddRow(panel, "Progression", _melodyProgressionBox);
+        AddRow(panel, "Preview BPM", _melodyPreviewBpmBox);
+        AddRow(panel, "Preview temperature", _melodyPreviewTemperatureBox);
+        AddRow(panel, "Preview top-k", _melodyPreviewTopKBox);
+        AddButtonRow(panel, Button("Install in app", MelodyInstall_Click));
+        AddButtonRow(panel,
+            Button("Inspect", MelodyInspect_Click),
+            Button("Evaluate", MelodyEvaluate_Click),
+            Button("Export ONNX", MelodyExport_Click));
+        AddButtonRow(panel, Button("Preview WAV", MelodyPreviewWav_Click), Button("Папка модели", OpenModelFolder_Click), Button("Папка tools", MelodyOpenTools_Click));
+
+        panel.Controls.Add(Note("Inspect показывает следующий токен мелодии. Evaluate считает сводные метрики: разнообразие, попадание в лад/настроение, ритм, энтропию и top3."));
+        return panel;
     }
 
     private Control BuildOutputPanel()
@@ -300,9 +465,25 @@ public sealed class TrainerForm : Form
         await RunPythonAsync("generate_synthetic_dataset.py", $"--output {Quote(_datasetBox.Text)} --count {_datasetCountBox.Value:0} --seed {_seedBox.Value:0} --profile {_profileBox.Text}");
     }
 
+    private async void MelodyGenerateDataset_Click(object? sender, EventArgs e)
+    {
+        await RunPythonAsync(
+            "generate_synthetic_dataset.py",
+            $"--output {Quote(_melodyDatasetBox.Text)} --count {_melodyDatasetCountBox.Value:0} --seed {_melodySeedBox.Value:0} --version 3 --vocab-output {Quote(_melodyVocabBox.Text)}",
+            workingDirectory: _melodyRootBox.Text);
+    }
+
     private async void ValidateDataset_Click(object? sender, EventArgs e)
     {
         await RunPythonAsync("validate_dataset.py", $"--dataset {Quote(_datasetBox.Text)}");
+    }
+
+    private async void MelodyValidateDataset_Click(object? sender, EventArgs e)
+    {
+        await RunPythonAsync(
+            "validate_dataset.py",
+            $"--dataset {Quote(_melodyDatasetBox.Text)}",
+            workingDirectory: _melodyRootBox.Text);
     }
 
     private void PreviewDataset_Click(object? sender, EventArgs e)
@@ -333,9 +514,42 @@ public sealed class TrainerForm : Form
         _datasetBox.Text = MakeToolRelativePath(dialog.FileName);
     }
 
+    private void MelodyPreviewDataset_Click(object? sender, EventArgs e)
+    {
+        string path = ResolveToolPath(_melodyDatasetBox.Text, _melodyRootBox.Text);
+        if (!File.Exists(path))
+        {
+            AppendLog($"dataset not found: {path}");
+            return;
+        }
+
+        _previewBox.Text = string.Join(Environment.NewLine, File.ReadLines(path).Take(120));
+    }
+
+    private void MelodyBrowseDataset_Click(object? sender, EventArgs e)
+    {
+        using var dialog = new OpenFileDialog
+        {
+            Title = "Выбрать датасет JSONL",
+            InitialDirectory = Directory.Exists(_melodyRootBox.Text) ? _melodyRootBox.Text : AppContext.BaseDirectory,
+            Filter = "JSONL dataset (*.jsonl)|*.jsonl|All files (*.*)|*.*",
+            CheckFileExists = true
+        };
+
+        if (dialog.ShowDialog(this) != DialogResult.OK)
+            return;
+
+        _melodyDatasetBox.Text = MakeToolRelativePath(dialog.FileName, _melodyRootBox.Text);
+    }
+
     private string MakeToolRelativePath(string path)
     {
-        string root = Path.GetFullPath(_progressionRootBox.Text);
+        return MakeToolRelativePath(path, _progressionRootBox.Text);
+    }
+
+    private static string MakeToolRelativePath(string path, string rootDirectory)
+    {
+        string root = Path.GetFullPath(rootDirectory);
         string fullPath = Path.GetFullPath(path);
         string relative = Path.GetRelativePath(root, fullPath);
         return relative.StartsWith("..", StringComparison.Ordinal) ? fullPath : relative;
@@ -345,6 +559,8 @@ public sealed class TrainerForm : Form
     {
         _epochList.Items.Clear();
         _trainProgress.Value = 0;
+        _activeProgressBar = _trainProgress;
+        _activeProgressLabel = _progressLabel;
         _progressLabel.Text = "Прогресс эпохи: запуск обучения";
         string args =
             $"--dataset {Quote(_datasetBox.Text)} " +
@@ -363,6 +579,101 @@ public sealed class TrainerForm : Form
             args += " --cpu";
 
         await RunPythonAsync("train.py", args);
+    }
+
+    private async void MelodyTrain_Click(object? sender, EventArgs e)
+    {
+        _epochList.Items.Clear();
+        _melodyTrainProgress.Value = 0;
+        _activeProgressBar = _melodyTrainProgress;
+        _activeProgressLabel = _melodyProgressLabel;
+        _melodyProgressLabel.Text = "Прогресс эпохи: запуск обучения";
+
+        string args =
+            $"--dataset {Quote(_melodyDatasetBox.Text)} " +
+            $"--vocab {Quote(_melodyVocabBox.Text)} " +
+            $"--epochs {_melodyEpochsBox.Value:0} " +
+            $"--batch-size {_melodyBatchBox.Value:0} " +
+            $"--learning-rate {DecimalText(_melodyLearningRateBox.Value)} " +
+            $"--label-smoothing {DecimalText(_melodyLabelSmoothingBox.Value)} " +
+            $"--mode-penalty {DecimalText(_melodyModePenaltyBox.Value)} " +
+            $"--mood-penalty {DecimalText(_melodyMoodPenaltyBox.Value)} " +
+            $"--style-penalty {DecimalText(_melodyStylePenaltyBox.Value)} " +
+            $"--entropy-penalty {DecimalText(_melodyEntropyPenaltyBox.Value)} " +
+            $"--interval-penalty {DecimalText(_melodyIntervalPenaltyBox.Value)} " +
+            $"--octave-penalty {DecimalText(_melodyOctavePenaltyBox.Value)} " +
+            $"--repeat-penalty {DecimalText(_melodyRepeatPenaltyBox.Value)} " +
+            $"--rest-penalty {DecimalText(_melodyRestPenaltyBox.Value)} " +
+            $"--duration-penalty {DecimalText(_melodyDurationPenaltyBox.Value)} " +
+            $"--embedding-size {_melodyEmbeddingSizeBox.Value:0} " +
+            $"--heads {_melodyHeadsBox.Value:0} " +
+            $"--layers {_melodyLayersBox.Value:0} " +
+            $"--feedforward-size {_melodyFeedforwardSizeBox.Value:0} " +
+            $"--dropout {DecimalText(_melodyDropoutBox.Value)} " +
+            $"--output-dir {Quote(_melodyOutputDirBox.Text)} " +
+            $"--save-every 10 " +
+            $"--progress-every {_melodyProgressEveryBox.Value:0} " +
+            $"--num-workers {_melodyNumWorkersBox.Value:0}";
+
+        if (!string.IsNullOrWhiteSpace(_melodyResumeBox.Text))
+            args += $" --resume {Quote(_melodyResumeBox.Text)}";
+        if (_melodyResetOptimizerBox.Checked)
+            args += " --reset-optimizer";
+        if (_melodyCpuBox.Checked)
+            args += " --cpu";
+        if (_melodyAmpBox.Checked)
+            args += " --amp";
+
+        await RunPythonAsync("train.py", args, workingDirectory: _melodyRootBox.Text);
+    }
+
+    private async void MelodyEvolveGeneration_Click(object? sender, EventArgs e)
+    {
+        _epochList.Items.Clear();
+        _melodyTrainProgress.Value = 0;
+        _activeProgressBar = _melodyTrainProgress;
+        _activeProgressLabel = _melodyProgressLabel;
+        _melodyProgressLabel.Text = "Поколение: запуск кандидатов";
+
+        string args =
+            $"--dataset {Quote(_melodyDatasetBox.Text)} " +
+            $"--vocab {Quote(_melodyVocabBox.Text)} " +
+            $"--output-dir {Quote(_melodyGenerationOutputBox.Text)} " +
+            $"--generation {_melodyGenerationBox.Value:0} " +
+            $"--population {_melodyPopulationBox.Value:0} " +
+            $"--epochs {_melodyGenerationEpochsBox.Value:0} " +
+            $"--batch-size {_melodyBatchBox.Value:0} " +
+            $"--learning-rate {DecimalText(_melodyLearningRateBox.Value)} " +
+            $"--label-smoothing {DecimalText(_melodyLabelSmoothingBox.Value)} " +
+            $"--mode-penalty {DecimalText(_melodyModePenaltyBox.Value)} " +
+            $"--mood-penalty {DecimalText(_melodyMoodPenaltyBox.Value)} " +
+            $"--style-penalty {DecimalText(_melodyStylePenaltyBox.Value)} " +
+            $"--entropy-penalty {DecimalText(_melodyEntropyPenaltyBox.Value)} " +
+            $"--interval-penalty {DecimalText(_melodyIntervalPenaltyBox.Value)} " +
+            $"--octave-penalty {DecimalText(_melodyOctavePenaltyBox.Value)} " +
+            $"--repeat-penalty {DecimalText(_melodyRepeatPenaltyBox.Value)} " +
+            $"--rest-penalty {DecimalText(_melodyRestPenaltyBox.Value)} " +
+            $"--duration-penalty {DecimalText(_melodyDurationPenaltyBox.Value)} " +
+            $"--embedding-size {_melodyEmbeddingSizeBox.Value:0} " +
+            $"--heads {_melodyHeadsBox.Value:0} " +
+            $"--layers {_melodyLayersBox.Value:0} " +
+            $"--feedforward-size {_melodyFeedforwardSizeBox.Value:0} " +
+            $"--dropout {DecimalText(_melodyDropoutBox.Value)} " +
+            $"--progress-every {_melodyProgressEveryBox.Value:0} " +
+            $"--num-workers {_melodyNumWorkersBox.Value:0} " +
+            $"--seed {_melodySeedBox.Value:0}";
+
+        if (!string.IsNullOrWhiteSpace(_melodyResumeBox.Text))
+            args += $" --resume {Quote(_melodyResumeBox.Text)}";
+        if (_melodyResetOptimizerBox.Checked)
+            args += " --reset-optimizer";
+        if (_melodyCpuBox.Checked)
+            args += " --cpu";
+        if (_melodyAmpBox.Checked)
+            args += " --amp";
+
+        await RunPythonAsync("evolve_generation.py", args, captureResult: true, workingDirectory: _melodyRootBox.Text);
+        ApplyLatestMelodyGenerationChampion();
     }
 
     private void Stop_Click(object? sender, EventArgs e)
@@ -445,6 +756,110 @@ public sealed class TrainerForm : Form
         AppendLog($"installed={targetPath}");
     }
 
+    private async void MelodyInspect_Click(object? sender, EventArgs e)
+    {
+        string args =
+            $"--checkpoint {Quote(_melodyCheckpointBox.Text)} " +
+            $"--vocab {Quote(_melodyVocabBox.Text)} " +
+            $"--previous {Quote(_melodyPreviousBox.Text)} " +
+            $"--style {_melodyStyleBox.Text} --mode {_melodyModeBox.Text} --mood {_melodyMoodBox.Text} " +
+            $"--meter {_melodyMeterBox.Text} --bars {_melodyBarsBox.Value:0} " +
+            $"--progression {Quote(_melodyProgressionBox.Text)}";
+        await RunPythonAsync("inspect_checkpoint.py", args, captureResult: true, workingDirectory: _melodyRootBox.Text);
+    }
+
+    private async void MelodyEvaluate_Click(object? sender, EventArgs e)
+    {
+        string args = $"--checkpoint {Quote(_melodyCheckpointBox.Text)} --vocab {Quote(_melodyVocabBox.Text)} --top-k 8";
+        await RunPythonAsync("evaluate_checkpoint.py", args, captureResult: true, parseEvaluation: true, workingDirectory: _melodyRootBox.Text);
+    }
+
+    private async void MelodyExport_Click(object? sender, EventArgs e)
+    {
+        string output = Path.Combine(Path.GetDirectoryName(_melodyCheckpointBox.Text) ?? string.Empty, "MelodyPhraseTransformer.onnx");
+        string args = $"--checkpoint {Quote(_melodyCheckpointBox.Text)} --vocab {Quote(_melodyVocabBox.Text)} --output {Quote(output)}";
+        await RunPythonAsync("export_onnx.py", args, workingDirectory: _melodyRootBox.Text);
+    }
+
+    private void MelodyInstall_Click(object? sender, EventArgs e)
+    {
+        string model = Path.Combine(Path.GetDirectoryName(_melodyCheckpointBox.Text) ?? string.Empty, "MelodyPhraseTransformer.onnx");
+        string sourceModel = ResolveToolPath(model, _melodyRootBox.Text);
+        string sourceVocabulary = ResolveToolPath(_melodyVocabBox.Text, _melodyRootBox.Text);
+        if (!File.Exists(sourceModel))
+        {
+            AppendLog($"melody model not found: {sourceModel}");
+            AppendLog("export ONNX first, then install it in the app");
+            return;
+        }
+
+        if (!File.Exists(sourceVocabulary))
+        {
+            AppendLog($"melody vocab not found: {sourceVocabulary}");
+            return;
+        }
+
+        string targetDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "GuitarToolkit", "models");
+        Directory.CreateDirectory(targetDir);
+        string targetModel = Path.Combine(targetDir, "MelodyPhraseTransformer.onnx");
+        string targetVocabulary = Path.Combine(targetDir, "MelodyPhraseTransformer.vocab.json");
+        File.Copy(sourceModel, targetModel, overwrite: true);
+        File.Copy(sourceVocabulary, targetVocabulary, overwrite: true);
+        AppendLog($"installed melody model={targetModel}");
+        AppendLog($"installed melody vocab={targetVocabulary}");
+    }
+
+    private async void MelodyPreviewWav_Click(object? sender, EventArgs e)
+    {
+        string output = Path.Combine(Path.GetDirectoryName(_melodyCheckpointBox.Text) ?? "runs", "melody_preview.wav");
+        string args =
+            $"--checkpoint {Quote(_melodyCheckpointBox.Text)} " +
+            $"--vocab {Quote(_melodyVocabBox.Text)} " +
+            $"--previous {Quote(_melodyPreviousBox.Text)} " +
+            $"--style {_melodyStyleBox.Text} --mode {_melodyModeBox.Text} --mood {_melodyMoodBox.Text} " +
+            $"--meter {_melodyMeterBox.Text} --bars {_melodyBarsBox.Value:0} " +
+            $"--progression {Quote(_melodyProgressionBox.Text)} " +
+            $"--bpm {_melodyPreviewBpmBox.Value:0} " +
+            $"--temperature {DecimalText(_melodyPreviewTemperatureBox.Value)} " +
+            $"--top-k {_melodyPreviewTopKBox.Value:0} " +
+            $"--output {Quote(output)}";
+        await RunPythonAsync("generate_preview.py", args, captureResult: true, workingDirectory: _melodyRootBox.Text);
+
+        string wav = ResolveToolPath(output, _melodyRootBox.Text);
+        if (File.Exists(wav))
+            Process.Start(new ProcessStartInfo { FileName = wav, UseShellExecute = true });
+    }
+
+    private void ApplyLatestMelodyGenerationChampion()
+    {
+        string summaryPath = ResolveToolPath(Path.Combine(_melodyGenerationOutputBox.Text, "generation_summary.json"), _melodyRootBox.Text);
+        if (!File.Exists(summaryPath))
+        {
+            AppendLog($"generation summary not found: {summaryPath}");
+            return;
+        }
+
+        try
+        {
+            using JsonDocument document = JsonDocument.Parse(File.ReadAllText(summaryPath));
+            JsonElement champions = document.RootElement.GetProperty("champions");
+            string balanced = GetString(champions.GetProperty("balanced"), "champion_checkpoint");
+            string relative = MakeToolRelativePath(ResolveToolPath(balanced, _melodyRootBox.Text), _melodyRootBox.Text);
+            _melodyResumeBox.Text = relative;
+            _melodyCheckpointBox.Text = relative;
+            _melodyGenerationBox.Value = Math.Min(_melodyGenerationBox.Maximum, _melodyGenerationBox.Value + 1);
+            AppendLog($"next generation parent={relative}");
+        }
+        catch (JsonException ex)
+        {
+            AppendLog($"generation summary parse failed: {ex.Message}");
+        }
+        catch (KeyNotFoundException ex)
+        {
+            AppendLog($"generation summary is missing expected field: {ex.Message}");
+        }
+    }
+
     private async void CheckGpu_Click(object? sender, EventArgs e)
     {
         await RunProcessAsync(
@@ -455,7 +870,11 @@ public sealed class TrainerForm : Form
 
     private void OpenRuns_Click(object? sender, EventArgs e) => OpenFolder(ResolveToolPath("runs"));
 
+    private void MelodyOpenRuns_Click(object? sender, EventArgs e) => OpenFolder(ResolveToolPath("runs", _melodyRootBox.Text));
+
     private void OpenTools_Click(object? sender, EventArgs e) => OpenFolder(_progressionRootBox.Text);
+
+    private void MelodyOpenTools_Click(object? sender, EventArgs e) => OpenFolder(_melodyRootBox.Text);
 
     private void OpenModelFolder_Click(object? sender, EventArgs e)
     {
@@ -463,9 +882,9 @@ public sealed class TrainerForm : Form
         OpenFolder(path);
     }
 
-    private async Task RunPythonAsync(string script, string arguments, bool captureResult = false, bool parseEvaluation = false)
+    private async Task RunPythonAsync(string script, string arguments, bool captureResult = false, bool parseEvaluation = false, string? workingDirectory = null)
     {
-        await RunProcessAsync(_pythonBox.Text, $"{script} {arguments}", _progressionRootBox.Text, captureResult, parseEvaluation);
+        await RunProcessAsync(_pythonBox.Text, $"{script} {arguments}", workingDirectory ?? _progressionRootBox.Text, captureResult, parseEvaluation);
     }
 
     private async Task RunProcessAsync(string fileName, string arguments, string workingDirectory, bool captureResult = false, bool parseEvaluation = false)
@@ -562,8 +981,10 @@ public sealed class TrainerForm : Form
         item.SubItems.Add(match.Groups["top3"].Value);
         _epochList.Items.Add(item);
         item.EnsureVisible();
-        _trainProgress.Value = 1000;
-        _progressLabel.Text = $"Эпоха {match.Groups["epoch"].Value}/{match.Groups["total"].Value}: validation готова";
+        ProgressBar progressBar = _activeProgressBar ?? _trainProgress;
+        Label progressLabel = _activeProgressLabel ?? _progressLabel;
+        progressBar.Value = 1000;
+        progressLabel.Text = $"Эпоха {match.Groups["epoch"].Value}/{match.Groups["total"].Value}: validation готова";
     }
 
     private void ParseProgress(string line)
@@ -573,8 +994,10 @@ public sealed class TrainerForm : Form
             return;
 
         double percent = double.Parse(match.Groups["percent"].Value, CultureInfo.InvariantCulture);
-        _trainProgress.Value = Math.Clamp((int)Math.Round(percent * 10), 0, 1000);
-        _progressLabel.Text =
+        ProgressBar progressBar = _activeProgressBar ?? _trainProgress;
+        Label progressLabel = _activeProgressLabel ?? _progressLabel;
+        progressBar.Value = Math.Clamp((int)Math.Round(percent * 10), 0, 1000);
+        progressLabel.Text =
             $"Эпоха {match.Groups["epoch"].Value}/{match.Groups["total"].Value}: " +
             $"{percent:0.0}% " +
             $"batch {match.Groups["batch"].Value}/{match.Groups["batches"].Value}, " +
@@ -600,6 +1023,12 @@ public sealed class TrainerForm : Form
             AddMetric(summary, "musicality_score_percent", "Музыкальное попадание", "%", "Масса вероятности и top-1 внутри допустимых для лада ступеней.");
             AddMetric(summary, "mood_fit_score_percent", "Попадание в настроение", "%", "Насколько ответы соответствуют выбранному mood.");
             AddMetric(summary, "style_fit_score_percent", "Попадание в стиль", "%", "Насколько ответы соответствуют выбранному style.");
+            AddMetric(summary, "interval_score_percent", "Осмысленность интервалов", "%", "Насколько модель избегает случайных слишком широких скачков между соседними нотами.");
+            AddMetric(summary, "octave_score_percent", "Управление октавами", "%", "Насколько регистр нот соответствует музыкальному контексту и настроению.");
+            AddMetric(summary, "phrase_life_score_percent", "Живость фразы", "%", "Сводная оценка против спама одинаковых нот, серий пауз и однообразных длительностей.");
+            AddMetric(summary, "anti_repeat_score_percent", "Анти-повторы", "%", "Насколько модель не залипает на одной и той же ноте.");
+            AddMetric(summary, "anti_rest_score_percent", "Анти-паузы", "%", "Насколько модель не уходит в серии пауз.");
+            AddMetric(summary, "anti_duration_score_percent", "Анти-ритм-спам", "%", "Насколько модель не топчется на одной длительности.");
             AddMetric(summary, "confidence_balance_percent", "Баланс уверенности", "%", "Штрафует слишком зажатую и слишком размазанную модель.");
             AddMetric(summary, "distinct_top1_percent", "Уникальность top-1", "%", "Сколько разных первых ответов модель дала на тестовый набор.");
             AddMetric(summary, "avg_entropy", "Средняя энтропия", "", "Сырая мера вариативности распределения.");
@@ -762,10 +1191,15 @@ public sealed class TrainerForm : Form
 
     private string ResolveToolPath(string path)
     {
+        return ResolveToolPath(path, _progressionRootBox.Text);
+    }
+
+    private static string ResolveToolPath(string path, string rootDirectory)
+    {
         if (Path.IsPathRooted(path))
             return path;
 
-        return Path.GetFullPath(Path.Combine(_progressionRootBox.Text, path));
+        return Path.GetFullPath(Path.Combine(rootDirectory, path));
     }
 
     private static string FindProgressionRoot()
@@ -789,6 +1223,29 @@ public sealed class TrainerForm : Form
         }
 
         return Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "progression_next_token"));
+    }
+
+    private static string FindMelodyRoot()
+    {
+        string bundled = Path.Combine(AppContext.BaseDirectory, "melody_phrase_transformer");
+        if (Directory.Exists(bundled))
+            return bundled;
+
+        string sibling = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "melody_phrase_transformer"));
+        if (Directory.Exists(sibling))
+            return sibling;
+
+        string current = AppContext.BaseDirectory;
+        for (int i = 0; i < 8; i++)
+        {
+            string candidate = Path.GetFullPath(Path.Combine(current, "..", "..", "..", "..", "melody_phrase_transformer"));
+            if (Directory.Exists(candidate))
+                return candidate;
+
+            current = Path.GetFullPath(Path.Combine(current, ".."));
+        }
+
+        return Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "melody_phrase_transformer"));
     }
 
     private static void OpenFolder(string path)
@@ -874,6 +1331,15 @@ public sealed class TrainerForm : Form
         _toolTip.SetToolTip(_progressEveryBox, "Как часто train.py пишет прогресс внутри эпохи. 0 отключает промежуточный вывод.");
         _toolTip.SetToolTip(_resetOptimizerBox, "Веса модели сохраняются, но AdamW начинает без старой инерции. Обычно включать при новом датасете или learning rate.");
         _toolTip.SetToolTip(_cpuBox, "Полезно только для отладки. Для нормального обучения оставь выключенным, чтобы работала видеокарта.");
+        _toolTip.SetToolTip(_melodyBatchBox, "Сколько примеров считать за раз. На RTX 3060 Ti для v2 пробуй 256, затем 384/512, пока хватает VRAM.");
+        _toolTip.SetToolTip(_melodyAmpBox, "Mixed precision на CUDA. Обычно ускоряет обучение и снижает расход видеопамяти.");
+        _toolTip.SetToolTip(_melodyNumWorkersBox, "Потоки загрузки датасета. На Windows начни с 0; если GPU простаивает, попробуй 2.");
+        _toolTip.SetToolTip(_melodyIntervalPenaltyBox, "Штрафует вероятность слишком широких случайных скачков между соседними нотами.");
+        _toolTip.SetToolTip(_melodyOctavePenaltyBox, "Мягко учит модель выбирать регистр по настроению, не держась слепо за одну октаву.");
+        _toolTip.SetToolTip(_melodyEmbeddingSizeBox, "Размер внутреннего представления токена. Больше = умнее, но медленнее.");
+        _toolTip.SetToolTip(_melodyLayersBox, "Количество слоев Transformer. 2 быстро, 3-4 качественнее и медленнее.");
+        _toolTip.SetToolTip(_melodyHeadsBox, "Количество attention heads. Должно делить embedding без остатка.");
+        _toolTip.SetToolTip(_melodyFeedforwardSizeBox, "Размер внутреннего MLP в Transformer. Обычно 3-4x от embedding.");
     }
 
     private sealed record EvaluationSummary(
