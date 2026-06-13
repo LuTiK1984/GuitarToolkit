@@ -114,7 +114,7 @@
         </Style>
     </UserControl.Resources>
 
-    <Grid Margin="8">
+    <Grid Margin="8" MinWidth="880">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="8"/>
@@ -124,11 +124,11 @@
         <Border Grid.Row="0" Style="{StaticResource Panel}">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="320"/>
                     <ColumnDefinition Width="10"/>
-                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="270"/>
                     <ColumnDefinition Width="10"/>
-                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="230"/>
                 </Grid.ColumnDefinitions>
 
                 <Grid Grid.Column="0">
@@ -164,9 +164,11 @@
 
                 <Grid Grid.Column="2">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="82"/>
                         <ColumnDefinition Width="10"/>
                         <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="62"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -182,31 +184,29 @@
                     <TextBlock Grid.Row="0" Grid.Column="2" Text="Настроение" Style="{StaticResource GroupLabel}"/>
                     <ComboBox x:Name="MoodBox" Grid.Row="1" Grid.Column="2"/>
 
+                    <TextBlock Grid.Row="0" Grid.Column="4" Text="Выборка" Style="{StaticResource GroupLabel}"/>
+                    <ComboBox x:Name="TopKBox" Grid.Row="1" Grid.Column="4"/>
+
                     <TextBlock Grid.Row="3" Grid.Column="0" Text="Вариативность" Style="{StaticResource GroupLabel}"/>
                     <Slider x:Name="TemperatureSlider"
                             Grid.Row="4"
                             Grid.Column="0"
+                            Grid.ColumnSpan="3"
                             Minimum="0.2"
                             Maximum="1.5"
                             Value="0.85"
                             ValueChanged="Temperature_Changed"/>
 
-                    <StackPanel Grid.Row="4" Grid.Column="2" Orientation="Horizontal">
-                        <TextBlock x:Name="TemperatureLabel"
-                                   Text="0.85"
-                                   Width="44"
-                                   FontWeight="Bold"
-                                   VerticalAlignment="Center"/>
-                        <TextBlock Text="Выборка"
-                                   Style="{StaticResource GroupLabel}"
-                                   Margin="8 0 6 0"
-                                   VerticalAlignment="Center"/>
-                        <ComboBox x:Name="TopKBox" Width="64"/>
-                    </StackPanel>
+                    <TextBlock x:Name="TemperatureLabel"
+                               Grid.Row="4"
+                               Grid.Column="4"
+                               Text="0.85"
+                               FontWeight="Bold"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center"/>
                 </Grid>
 
                 <StackPanel Grid.Column="4"
-                            Width="230"
                             VerticalAlignment="Bottom">
                     <Grid Margin="0 0 0 8">
                         <Grid.ColumnDefinitions>

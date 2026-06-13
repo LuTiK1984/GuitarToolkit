@@ -1,0 +1,29 @@
+{
+  "special_tokens": ["<PAD>", "<UNK>", "<BOS>", "<EOS>"],
+  "style_tokens": ["STYLE_METAL", "STYLE_ROCK", "STYLE_POP", "STYLE_AMBIENT", "STYLE_BLUES"],
+  "mode_tokens": ["MODE_MAJOR", "MODE_NATURAL_MINOR", "MODE_DORIAN", "MODE_PHRYGIAN", "MODE_HARMONIC_MINOR"],
+  "mood_tokens": ["MOOD_DARK", "MOOD_EPIC", "MOOD_BRIGHT", "MOOD_CALM", "MOOD_TENSE"],
+  "meter_tokens": ["METER_4_4", "METER_3_4", "METER_6_8"],
+  "bar_tokens": ["BARS_1", "BARS_2", "BARS_4"],
+  "progression_tokens": [
+    "I", "ii", "iii", "IV", "V", "vi", "vii_dim",
+    "i", "ii_dim", "III", "iv", "v", "VI", "VII",
+    "bII", "bVI", "bVII"
+  ],
+  "phrase_tokens": [
+    "D:1:1/16", "D:1:1/8", "D:1:1/4", "D:1:1/2",
+    "D:b2:1/16", "D:b2:1/8", "D:b2:1/4", "D:b2:1/2",
+    "D:2:1/16", "D:2:1/8", "D:2:1/4", "D:2:1/2",
+    "D:b3:1/16", "D:b3:1/8", "D:b3:1/4", "D:b3:1/2",
+    "D:3:1/16", "D:3:1/8", "D:3:1/4", "D:3:1/2",
+    "D:4:1/16", "D:4:1/8", "D:4:1/4", "D:4:1/2",
+    "D:#4:1/16", "D:#4:1/8", "D:#4:1/4", "D:#4:1/2",
+    "D:5:1/16", "D:5:1/8", "D:5:1/4", "D:5:1/2",
+    "D:b6:1/16", "D:b6:1/8", "D:b6:1/4", "D:b6:1/2",
+    "D:6:1/16", "D:6:1/8", "D:6:1/4", "D:6:1/2",
+    "D:b7:1/16", "D:b7:1/8", "D:b7:1/4", "D:b7:1/2",
+    "D:7:1/16", "D:7:1/8", "D:7:1/4", "D:7:1/2",
+    "D:8:1/16", "D:8:1/8", "D:8:1/4", "D:8:1/2",
+    "R:1/16", "R:1/8", "R:1/4", "R:1/2"
+  ]
+}

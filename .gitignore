@@ -48,6 +48,7 @@ tools/ml/**/.venv/
 tools/ml/**/runs/
 tools/ml/**/__pycache__/
 tools/ml/**/synthetic_dataset_*.jsonl
+tools/ml/**/synthetic_melody_dataset*.jsonl
 tools/ml/**/*.pt
 tools/ml/**/*.onnx
 tools/ml/**/*.pth

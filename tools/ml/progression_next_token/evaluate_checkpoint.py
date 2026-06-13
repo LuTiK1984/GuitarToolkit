@@ -229,7 +229,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Evaluate checkpoint diversity on fixed musical prompts.")
     parser.add_argument("--checkpoint", default="runs/progression_next_token/best_model.pt")
     parser.add_argument("--vocab", default="vocab.json")
-    parser.add_argument("--prompts", default="eval_prompts.jsonl")
+    parser.add_argument("--prompts", default="eval_prompts_full.jsonl")
     parser.add_argument("--top-k", type=int, default=8)
     return parser.parse_args()
 

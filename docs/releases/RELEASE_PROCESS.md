@@ -74,7 +74,17 @@ Expected assets:
 ```text
 GuitarToolkit_DESKTOP_v.<version>.zip
 GuitarToolkit_VST3_v.<version>.zip
+GuitarToolkit_ML_TRAINER_v.<version>.zip
+SHA256SUMS.txt
 ```
+
+If a Windows code-signing certificate is available, pass its thumbprint so release binaries are Authenticode-signed before packaging:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\build-release.ps1 -Version <version> -Configuration Release -CertificateThumbprint <thumbprint>
+```
+
+The script also writes per-asset `.sha256` files. Upload both the ZIP files and checksum files to GitHub Releases.
 
 ## 6. Manual Desktop smoke test
 
@@ -114,6 +124,9 @@ Upload:
 
 - `GuitarToolkit_DESKTOP_v.<version>.zip`;
 - `GuitarToolkit_VST3_v.<version>.zip`.
+- `GuitarToolkit_ML_TRAINER_v.<version>.zip`;
+- `SHA256SUMS.txt`;
+- per-asset `.sha256` files.
 
 Release description should include summary, highlights, installation notes, known issues, verification status, and links to Quick Start and Discussions.
 

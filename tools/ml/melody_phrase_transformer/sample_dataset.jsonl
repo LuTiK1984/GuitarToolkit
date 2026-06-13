@@ -1,0 +1,3 @@
+{"style":"STYLE_METAL","mode":"MODE_NATURAL_MINOR","mood":"MOOD_DARK","meter":"METER_4_4","bars":1,"progression":["i","VI"],"tokens":["<BOS>","D:1:1/8","D:b3:1/8","D:4:1/8","D:5:1/8","D:b7:1/4","D:5:1/4","<EOS>"]}
+{"style":"STYLE_POP","mode":"MODE_MAJOR","mood":"MOOD_BRIGHT","meter":"METER_4_4","bars":1,"progression":["I","V","vi","IV"],"tokens":["<BOS>","D:1:1/4","D:3:1/8","D:5:1/8","D:6:1/4","D:5:1/4","<EOS>"]}
+{"style":"STYLE_AMBIENT","mode":"MODE_DORIAN","mood":"MOOD_CALM","meter":"METER_3_4","bars":1,"progression":["i","IV"],"tokens":["<BOS>","D:1:1/4","R:1/8","D:b3:1/8","D:5:1/4","<EOS>"]}

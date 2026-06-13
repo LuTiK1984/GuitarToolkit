@@ -38,6 +38,8 @@ Expected:
 - Build has 0 errors and 0 warnings.
 - All tests pass.
 - Release ZIP files are created in `artifacts/release/`.
+- `SHA256SUMS.txt` and per-asset `.sha256` files are created in `artifacts/release/`.
+- If a certificate is available, release binaries are signed with `-CertificateThumbprint <thumbprint>`.
 
 ## 3. Manual Desktop Check
 
@@ -66,6 +68,9 @@ Expected:
 - Upload:
   - `GuitarToolkit_VST3_v.<version>.zip`
   - `GuitarToolkit_DESKTOP_v.<version>.zip`
+  - `GuitarToolkit_ML_TRAINER_v.<version>.zip`
+  - `SHA256SUMS.txt`
+  - per-asset `.sha256` files
 - Paste release notes from `CHANGELOG.md` or the template in `docs/releases/RELEASE_PROCESS.md`.
 - Review asset names and description.
 - Publish the release.

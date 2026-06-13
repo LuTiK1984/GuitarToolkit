@@ -2,10 +2,10 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
-        Title="GuitarToolkit v1.6.0"
+        Title="GuitarToolkit v1.7.0"
         Icon="Assets/GuitarToolkit.ico"
-        Width="1050" Height="720"
-        MinWidth="1050" MinHeight="720"
+        Width="1050" Height="780"
+        MinWidth="1050" MinHeight="780"
         Background="{DynamicResource AppBackgroundBrush}"
         WindowStyle="None"
         ResizeMode="CanResize"
@@ -136,7 +136,7 @@
                            Width="16"
                            Height="16"
                            Margin="0 0 6 0"/>
-                    <TextBlock Text="GuitarToolkit v1.6.0"
+                    <TextBlock Text="GuitarToolkit v1.7.0"
                                Foreground="{DynamicResource TitleTextBrush}"
                                FontSize="12"
                                VerticalAlignment="Center"/>

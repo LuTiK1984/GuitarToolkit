@@ -10,6 +10,7 @@ namespace GuitarToolkit.UI;
 public partial class AboutView : UserControl
 {
     private const string GitHubUrl = "https://github.com/LuTiK1984/GuitarToolkitVST";
+    private const string LicenseUrl = "https://github.com/LuTiK1984/GuitarToolkitVST/blob/master/LICENSE";
 
     public AboutView()
     {
@@ -53,6 +54,24 @@ public partial class AboutView : UserControl
             MessageBox.Show(
                 AppLogger.LogDirectory,
                 "GuitarToolkit logs",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
+        }
+    }
+
+    private void License_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            string licensePath = Path.Combine(AppContext.BaseDirectory, "LICENSE");
+            Open(File.Exists(licensePath) ? licensePath : LicenseUrl);
+        }
+        catch (Exception ex)
+        {
+            AppLogger.Warning("Failed to open license.", ex);
+            MessageBox.Show(
+                "GuitarToolkit is released under the MIT License. The LICENSE file is included with every release package.",
+                "GuitarToolkit license",
                 MessageBoxButton.OK,
                 MessageBoxImage.Information);
         }

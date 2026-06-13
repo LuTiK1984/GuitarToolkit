@@ -11,16 +11,26 @@ public static class NoteSynth
     public static float[] GenerateNote(float frequency, int sampleRate = 44100,
         float duration = 0.8f, float volume = 0.3f)
     {
-        int count = (int)(sampleRate * duration);
+        int count = Math.Max(1, (int)(sampleRate * duration));
         float[] buf = new float[count];
+        float attackSeconds = Math.Min(0.012f, duration * 0.25f);
+        float releaseSeconds = Math.Min(0.08f, duration * 0.4f);
 
         for (int i = 0; i < count; i++)
         {
             float t = (float)i / sampleRate;
-            float env = MathF.Exp(-t * 3f);
-            buf[i] = (MathF.Sin(2f * MathF.PI * frequency * t) * 0.8f
-                     + MathF.Sin(2f * MathF.PI * frequency * 2f * t) * 0.2f)
-                     * env * volume;
+            float remaining = duration - t;
+            float attack = attackSeconds <= 0f ? 1f : Math.Clamp(t / attackSeconds, 0f, 1f);
+            float release = releaseSeconds <= 0f ? 1f : Math.Clamp(remaining / releaseSeconds, 0f, 1f);
+            float body = 0.62f + MathF.Exp(-t * 1.6f) * 0.38f;
+            float env = attack * release * body;
+
+            float sample = MathF.Sin(2f * MathF.PI * frequency * t) * 0.70f
+                         + MathF.Sin(2f * MathF.PI * frequency * 2f * t) * 0.20f
+                         + MathF.Sin(2f * MathF.PI * frequency * 3f * t) * 0.08f
+                         + MathF.Sin(2f * MathF.PI * frequency * 4f * t) * 0.02f;
+
+            buf[i] = sample * env * volume;
         }
 
         return buf;

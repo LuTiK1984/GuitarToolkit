@@ -4,7 +4,7 @@
              xmlns:local="clr-namespace:GuitarToolkit.UI"
              Background="{DynamicResource AppBackgroundBrush}"
              Loaded="UserControl_Loaded"
-             MinWidth="750" MinHeight="500">
+             MinWidth="1050" MinHeight="720">
 
     <UserControl.Resources>
         <SolidColorBrush x:Key="AppBackgroundBrush" Color="#1A1525"/>
@@ -233,6 +233,10 @@
             <ScrollViewer>
                 <local:InspirationView x:Name="InspirationTab"/>
             </ScrollViewer>
+        </TabItem>
+
+        <TabItem Header="&#x266B; &#x41C;&#x435;&#x43B;&#x43E;&#x434;&#x438;&#x438;">
+            <local:MelodyIdeasView x:Name="MelodyIdeasTab"/>
         </TabItem>
 
         <TabItem Header="&#x25CB; &#x41A;&#x440;&#x443;&#x433; &#x43A;&#x432;&#x438;&#x43D;&#x442;">

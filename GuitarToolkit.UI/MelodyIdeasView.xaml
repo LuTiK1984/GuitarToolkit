@@ -1,0 +1,370 @@
+<UserControl x:Class="GuitarToolkit.UI.MelodyIdeasView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="{DynamicResource AppBackgroundBrush}"
+             Focusable="True"
+             PreviewKeyDown="UserControl_PreviewKeyDown">
+    <UserControl.Resources>
+        <Style x:Key="Panel" TargetType="{x:Type Border}">
+            <Setter Property="Background" Value="{DynamicResource PanelBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource PanelBorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Padding" Value="10"/>
+        </Style>
+
+        <Style x:Key="SectionPanel" TargetType="{x:Type Border}" BasedOn="{StaticResource Panel}">
+            <Setter Property="Background" Value="{DynamicResource DarkBrush}"/>
+            <Setter Property="Padding" Value="10 8"/>
+        </Style>
+
+        <Style x:Key="GroupLabel" TargetType="{x:Type TextBlock}">
+            <Setter Property="Foreground" Value="{DynamicResource MutedTextBrush}"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Margin" Value="0 0 0 4"/>
+        </Style>
+
+        <Style x:Key="MutedText" TargetType="{x:Type TextBlock}">
+            <Setter Property="Foreground" Value="{DynamicResource MutedTextBrush}"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
+
+        <Style x:Key="MelodyButton" TargetType="{x:Type Button}">
+            <Setter Property="Height" Value="28"/>
+            <Setter Property="MinWidth" Value="32"/>
+            <Setter Property="Padding" Value="10 0"/>
+            <Setter Property="Background" Value="{DynamicResource ControlBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource ControlBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border x:Name="Chrome"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="4">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"
+                                              RecognizesAccessKey="True"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource ControlHoverBrush}"/>
+                                <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource ControlHoverBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource AccentBrush}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource DarkBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.55"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="PrimaryButton" TargetType="{x:Type Button}" BasedOn="{StaticResource MelodyButton}">
+            <Setter Property="Background" Value="{DynamicResource AccentBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource DarkBrush}"/>
+        </Style>
+
+        <Style x:Key="PlayButton" TargetType="{x:Type Button}" BasedOn="{StaticResource MelodyButton}">
+            <Setter Property="Background" Value="{DynamicResource StartBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource StartBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource DarkBrush}"/>
+        </Style>
+
+        <Style x:Key="DangerButton" TargetType="{x:Type Button}" BasedOn="{StaticResource MelodyButton}">
+            <Setter Property="Background" Value="{DynamicResource DangerBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource DangerBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource DarkBrush}"/>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Margin="8" MinWidth="880">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="8"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="8"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Style="{StaticResource Panel}">
+            <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                          VerticalScrollBarVisibility="Disabled">
+                <Grid MinWidth="890" Margin="0 0 0 8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="210"/>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="215"/>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="230"/>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="205"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid Grid.Column="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="74"/>
+                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="8"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Тоника" Style="{StaticResource GroupLabel}"/>
+                        <ComboBox x:Name="RootBox" Grid.Row="1" Grid.Column="0"/>
+
+                        <TextBlock Grid.Row="0" Grid.Column="2" Text="Лад" Style="{StaticResource GroupLabel}"/>
+                        <ComboBox x:Name="ModeBox" Grid.Row="1" Grid.Column="2"/>
+
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Тактов" Style="{StaticResource GroupLabel}"/>
+                        <ComboBox x:Name="BarsBox" Grid.Row="4" Grid.Column="0"/>
+
+                        <TextBlock Grid.Row="3" Grid.Column="2" Text="Размер" Style="{StaticResource GroupLabel}"/>
+                        <ComboBox x:Name="MeterBox" Grid.Row="4" Grid.Column="2"/>
+                    </Grid>
+
+                    <Grid Grid.Column="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="105"/>
+                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="8"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Стиль" Style="{StaticResource GroupLabel}"/>
+                        <ComboBox x:Name="StyleBox" Grid.Row="1" Grid.Column="0"/>
+
+                        <TextBlock Grid.Row="0" Grid.Column="2" Text="Настроение" Style="{StaticResource GroupLabel}"/>
+                        <ComboBox x:Name="MoodBox" Grid.Row="1" Grid.Column="2"/>
+
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Выборка" Style="{StaticResource GroupLabel}"/>
+                        <ComboBox x:Name="TopKBox" Grid.Row="4" Grid.Column="0"/>
+
+                        <CheckBox x:Name="LoopCheck"
+                                  Grid.Row="4"
+                                  Grid.Column="2"
+                                  Content="Цикл"
+                                  VerticalAlignment="Center"/>
+                    </Grid>
+
+                    <Grid Grid.Column="4">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="8"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="58"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="BPM" Style="{StaticResource GroupLabel}"/>
+                        <TextBlock x:Name="TempoLabel" Grid.Row="0" Grid.Column="1" Text="100" FontWeight="Bold" HorizontalAlignment="Right"/>
+                        <Slider x:Name="TempoSlider"
+                                Grid.Row="1"
+                                Grid.ColumnSpan="2"
+                                Minimum="50"
+                                Maximum="220"
+                                Value="100"
+                                ValueChanged="Tempo_Changed"/>
+
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Вариативность" Style="{StaticResource GroupLabel}"/>
+                        <TextBlock x:Name="TemperatureLabel" Grid.Row="3" Grid.Column="1" Text="0.85" FontWeight="Bold" HorizontalAlignment="Right"/>
+                        <Slider x:Name="TemperatureSlider"
+                                Grid.Row="4"
+                                Grid.ColumnSpan="2"
+                                Minimum="0.2"
+                                Maximum="1.6"
+                                Value="0.85"
+                                ValueChanged="Temperature_Changed"/>
+                    </Grid>
+
+                    <Grid Grid.Column="6">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="8"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="8"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="8"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Мелодия" Style="{StaticResource GroupLabel}"/>
+                        <TextBlock x:Name="MelodyVolumeLabel" Grid.Row="0" Grid.Column="2" Text="75%" FontWeight="Bold" HorizontalAlignment="Right"/>
+                        <Slider x:Name="MelodyVolumeSlider"
+                                Grid.Row="1"
+                                Grid.ColumnSpan="3"
+                                Minimum="0"
+                                Maximum="100"
+                                Value="75"
+                                ValueChanged="Volume_Changed"/>
+
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Прогрессия" Style="{StaticResource GroupLabel}"/>
+                        <TextBlock x:Name="ProgressionVolumeLabel" Grid.Row="3" Grid.Column="2" Text="85%" FontWeight="Bold" HorizontalAlignment="Right"/>
+                        <Slider x:Name="ProgressionVolumeSlider"
+                                Grid.Row="4"
+                                Grid.ColumnSpan="3"
+                                Minimum="0"
+                                Maximum="100"
+                                Value="85"
+                                ValueChanged="Volume_Changed"/>
+
+                        <Button Grid.Row="6" Grid.Column="0"
+                                Content="Сгенерировать"
+                                Style="{StaticResource PrimaryButton}"
+                                Click="Generate_Click"/>
+                        <Button Grid.Row="6" Grid.Column="2"
+                                Content="Стоп"
+                                x:Name="StopButton"
+                                Style="{StaticResource DangerButton}"
+                                Visibility="Collapsed"
+                                Click="Stop_Click"/>
+                    </Grid>
+                </Grid>
+            </ScrollViewer>
+        </Border>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="280"/>
+                <ColumnDefinition Width="8"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="8"/>
+                <ColumnDefinition Width="230"/>
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0" Style="{StaticResource Panel}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="8"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="8"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="Опорная прогрессия" Style="{StaticResource GroupLabel}"/>
+                    <Border Grid.Row="2" Style="{StaticResource SectionPanel}">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <WrapPanel x:Name="ProgressionItems"/>
+                        </ScrollViewer>
+                    </Border>
+                    <UniformGrid Grid.Row="4" Columns="2">
+                        <Button Content="▶ Прогрессия" Style="{StaticResource MelodyButton}" Margin="0 0 3 0" Click="PlayProgression_Click"/>
+                        <Button Content="▶ Вместе" Style="{StaticResource PlayButton}" Margin="3 0 0 0" Click="PlayTogether_Click"/>
+                    </UniformGrid>
+                </Grid>
+            </Border>
+
+            <Border Grid.Column="2" Style="{StaticResource Panel}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="8"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="8"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="Мелодический скетч" Style="{StaticResource GroupLabel}"/>
+
+                    <WrapPanel Grid.Row="2">
+                        <ComboBox x:Name="InputDurationBox" Width="76" Margin="0 0 6 0"/>
+                        <Button Content="+ Полутон" Style="{StaticResource MelodyButton}" Margin="0 0 6 0" Click="TransposeUp_Click"/>
+                        <Button Content="- Полутон" Style="{StaticResource MelodyButton}" Margin="0 0 6 0" Click="TransposeDown_Click"/>
+                        <Button Content="Удалить" Style="{StaticResource DangerButton}" Margin="0 0 6 0" Click="DeleteSelected_Click"/>
+                        <Button Content="▶ Мелодия" Style="{StaticResource PlayButton}" Click="PlayMelody_Click"/>
+                    </WrapPanel>
+
+                    <Button Grid.Row="2"
+                            Content="Стоп"
+                            Style="{StaticResource DangerButton}"
+                            HorizontalAlignment="Right"
+                            Click="Stop_Click"/>
+
+                    <Border Grid.Row="4" Style="{StaticResource SectionPanel}">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <ItemsControl x:Name="MelodyItems">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <WrapPanel/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </Border>
+                </Grid>
+            </Border>
+
+            <Border Grid.Column="4" Style="{StaticResource Panel}">
+                <StackPanel>
+                    <TextBlock Text="Статус модели" Style="{StaticResource GroupLabel}"/>
+                    <TextBlock x:Name="ModelStatusText"
+                               Style="{StaticResource MutedText}"
+                               Margin="0 0 0 12"
+                               Text="Модель будет загружена при генерации."/>
+                    <TextBlock Text="Результат" Style="{StaticResource GroupLabel}"/>
+                    <TextBlock x:Name="TokenText" Style="{StaticResource MutedText}" Margin="0 0 0 12"/>
+                    <TextBlock Text="Ноты" Style="{StaticResource GroupLabel}"/>
+                    <TextBlock x:Name="NoteText" Style="{StaticResource MutedText}"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <Border Grid.Row="4" Style="{StaticResource Panel}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="8"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <TextBlock Text="Пианино: A W S E D F T G Y H U J" Style="{StaticResource GroupLabel}"/>
+                <ScrollViewer Grid.Row="2"
+                              HorizontalScrollBarVisibility="Auto"
+                              VerticalScrollBarVisibility="Disabled">
+                    <Canvas x:Name="PianoCanvas"
+                            Height="94"
+                            Width="1218"
+                            HorizontalAlignment="Center"/>
+                </ScrollViewer>
+                <CheckBox x:Name="RecordPianoCheck"
+                          Grid.Row="0"
+                          Content="Record"
+                          IsChecked="True"
+                          HorizontalAlignment="Right"
+                          VerticalAlignment="Top"/>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

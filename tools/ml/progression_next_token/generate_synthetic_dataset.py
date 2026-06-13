@@ -13,6 +13,7 @@ GENERATION_PROFILES = {
         "mutation_scale": 0.75,
         "bridge_rate": 0.08,
         "borrowed_rate": 0.06,
+        "mood_rate": 0.08,
     },
     "balanced": {
         "substitution_rate": 0.18,
@@ -20,6 +21,7 @@ GENERATION_PROFILES = {
         "mutation_scale": 1.0,
         "bridge_rate": 0.16,
         "borrowed_rate": 0.12,
+        "mood_rate": 0.18,
     },
     "diverse": {
         "substitution_rate": 0.26,
@@ -27,6 +29,15 @@ GENERATION_PROFILES = {
         "mutation_scale": 1.25,
         "bridge_rate": 0.28,
         "borrowed_rate": 0.20,
+        "mood_rate": 0.35,
+    },
+    "mood": {
+        "substitution_rate": 0.14,
+        "cadence_rate": 0.38,
+        "mutation_scale": 1.15,
+        "bridge_rate": 0.14,
+        "borrowed_rate": 0.10,
+        "mood_rate": 0.92,
     },
 }
 
@@ -151,6 +162,22 @@ STYLE_WEIGHTS = {
 MOODS = ["MOOD_DARK", "MOOD_EPIC", "MOOD_BRIGHT", "MOOD_CALM", "MOOD_TENSE"]
 STYLE_MODE_PAIRS = [(style, mode) for style, modes in STYLE_WEIGHTS.items() for mode in modes]
 
+MODE_ALLOWED_TOKENS = {
+    "MODE_MAJOR": {"I", "ii", "iii", "IV", "V", "vi", "vii°", "bVII", "bVI", "bII"},
+    "MODE_NATURAL_MINOR": {"i", "ii°", "III", "iv", "v", "VI", "VII", "bII", "bVI", "bVII", "V"},
+    "MODE_DORIAN": {"i", "ii", "III", "IV", "v", "vi°", "bVII", "VII"},
+    "MODE_PHRYGIAN": {"i", "bII", "III", "iv", "v", "VI", "VII", "ii°"},
+    "MODE_HARMONIC_MINOR": {"i", "ii°", "III+", "iv", "V", "VI", "vii°", "bII", "VII"},
+}
+
+MOOD_PREFERRED_TOKENS = {
+    "MOOD_DARK": ["i", "iv", "v", "VI", "VII", "bII", "bVI", "bVII"],
+    "MOOD_EPIC": ["i", "I", "IV", "V", "VI", "VII", "bII"],
+    "MOOD_BRIGHT": ["I", "IV", "V", "vi", "ii", "iii"],
+    "MOOD_CALM": ["I", "vi", "IV", "ii", "i", "III", "VII", "bVII"],
+    "MOOD_TENSE": ["V", "bII", "vii°", "ii°", "bVII", "VII", "iv"],
+}
+
 CADENCES = {
     "MODE_MAJOR": [["V", "I"], ["IV", "V", "I"], ["ii", "V", "I"], ["vi", "IV", "V", "I"]],
     "MODE_NATURAL_MINOR": [["V", "i"], ["VII", "i"], ["iv", "V", "i"], ["VI", "VII", "i"]],
@@ -253,6 +280,39 @@ def mutate(tokens: list[str], mode: str, mood: str, rng: random.Random, mutation
     return result
 
 
+def mood_choices(mode: str, mood: str) -> list[str]:
+    allowed = MODE_ALLOWED_TOKENS.get(mode, set())
+    return [token for token in MOOD_PREFERRED_TOKENS.get(mood, []) if token in allowed]
+
+
+def apply_mood_shape(tokens: list[str], mode: str, mood: str, rng: random.Random, mood_rate: float) -> list[str]:
+    choices = mood_choices(mode, mood)
+    if len(tokens) < 3 or not choices or rng.random() > mood_rate:
+        return tokens
+
+    result = list(tokens)
+    replacement_count = 1 if len(result) < 6 else rng.choice([1, 2])
+    protected_positions = {0, len(result) - 1}
+    candidate_positions = [index for index in range(len(result)) if index not in protected_positions]
+    rng.shuffle(candidate_positions)
+
+    for index in candidate_positions[:replacement_count]:
+        result[index] = rng.choice(choices)
+
+    if mood == "MOOD_TENSE" and rng.random() < 0.55 and len(result) >= 4:
+        result[-2] = rng.choice(choices)
+    elif mood == "MOOD_CALM" and rng.random() < 0.45:
+        result = result[:4]
+    elif mood == "MOOD_EPIC" and rng.random() < 0.45 and len(result) <= 8:
+        result.append(rng.choice(choices))
+    elif mood == "MOOD_BRIGHT" and mode == "MODE_MAJOR" and rng.random() < 0.50:
+        result[0] = "I"
+    elif mood == "MOOD_DARK" and "i" in choices and rng.random() < 0.50:
+        result[0] = "i"
+
+    return result
+
+
 def choose_context(rng: random.Random, balanced: bool, index: int) -> tuple[str, str, str]:
     if balanced:
         style, mode = STYLE_MODE_PAIRS[index % len(STYLE_MODE_PAIRS)]
@@ -280,6 +340,7 @@ def build_examples(count: int, seed: int, balanced: bool, profile_name: str) -> 
         tokens = add_borrowed_move(tokens, mode, rng, profile["borrowed_rate"])
         tokens = add_cadence(tokens, mode, rng, profile["cadence_rate"])
         tokens = mutate(tokens, mode, mood, rng, profile["mutation_scale"])
+        tokens = apply_mood_shape(tokens, mode, mood, rng, profile.get("mood_rate", 0.0))
         examples.append(
             {
                 "style": style,
