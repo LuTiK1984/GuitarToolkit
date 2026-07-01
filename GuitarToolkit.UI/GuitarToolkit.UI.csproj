@@ -10,6 +10,6 @@
     <ProjectReference Include="..\GuitarToolkit.Core\GuitarToolkit.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="AlphaTab.Windows" Version="1.8.2" />
+    <PackageReference Include="AlphaTab.Windows" Version="1.8.3" />
   </ItemGroup>
 </Project>
