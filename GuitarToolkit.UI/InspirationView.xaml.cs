@@ -1,7 +1,6 @@
 using GuitarToolkit.Core.DSP;
 using GuitarToolkit.Core.Generation;
 using GuitarToolkit.Core.Models;
-using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -25,19 +24,12 @@ public partial class InspirationView : UserControl, IThemeAware
     {
         InitializeComponent();
         _service = new ProgressionInspirationService(
-            new OnnxProgressionModel(DefaultModelPath),
+            new OnnxProgressionModel(RuntimeModelPaths.ResolveSingle("ProgressionNextTokenModel.onnx")),
             new DemoProgressionNextTokenModel());
 
         BuildControls();
         RenderEmptyState();
     }
-
-    private static string DefaultModelPath =>
-        Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "GuitarToolkit",
-            "models",
-            "ProgressionNextTokenModel.onnx");
 
     public void Initialize(IAudioPlayback audio)
     {

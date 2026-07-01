@@ -30,8 +30,8 @@ For installation details, use the [Quick Start guide](docs/user/QUICK_START.md).
 - Progression builder with presets, custom saved progressions, playback, and looping.
 - Circle of fifths with related keys, diatonic chords, and common progressions.
 - Tabs viewer for Guitar Pro / MusicXML files through alphaTab, including GP3, GP4, GP5/GPX, and MusicXML when supported by the importer.
-- Inspiration Engine for local ONNX progression ideas, plus a separate ML Trainer utility for dataset generation, training, checkpoint comparison, ONNX export, and model installation.
-- Melody sketchbook with local ONNX Transformer generation, backing progressions, synchronized playback, editable notes, and a three-octave piano.
+- Inspiration Engine with a bundled local ONNX progression model, plus a separate ML Trainer utility for dataset generation, training, checkpoint comparison, ONNX export, and model installation.
+- Melody sketchbook with a bundled local ONNX Transformer model, backing progressions, synchronized playback, editable notes, and a three-octave piano.
 - Dark and light themes.
 
 ## Screenshots
@@ -145,9 +145,9 @@ VST is a trademark of Steinberg Media Technologies GmbH. Third-party dependency 
 - Конструктор прогрессий с пресетами, сохранением, воспроизведением и циклом.
 - Круг квинт с родственными тональностями, диатоническими аккордами и популярными прогрессиями.
 - Просмотр табулатур через alphaTab: GP3, GP4, GP5/GPX и MusicXML, если конкретный файл поддерживается импортёром.
-- Inspiration Engine: локальная ONNX-модель для генерации прогрессий.
+- Inspiration Engine: встроенная локальная ONNX-модель для генерации прогрессий.
 - Отдельная утилита ML Trainer для датасетов, обучения, сравнения чекпоинтов, экспорта ONNX и установки модели в программу.
-- Вкладка “Мелодии” как заготовка под будущую Transformer-модель коротких фраз.
+- Вкладка “Мелодии” со встроенной локальной ONNX Transformer-моделью коротких фраз.
 - Тёмная и светлая темы.
 
 ## Скриншоты

@@ -1,7 +1,6 @@
 using GuitarToolkit.Core.DSP;
 using GuitarToolkit.Core.Generation;
 using GuitarToolkit.Core.Models;
-using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -38,8 +37,11 @@ public partial class MelodyIdeasView : UserControl, IThemeAware
     public MelodyIdeasView()
     {
         InitializeComponent();
+        var modelFiles = RuntimeModelPaths.ResolvePair(
+            "MelodyPhraseTransformer.onnx",
+            "MelodyPhraseTransformer.vocab.json");
         _service = new MelodyGenerationService(
-            new OnnxMelodyPhraseModel(DefaultModelPath, DefaultVocabularyPath),
+            new OnnxMelodyPhraseModel(modelFiles.ModelPath, modelFiles.VocabularyPath),
             new DemoMelodyPhraseModel());
 
         BuildControls();
@@ -48,13 +50,6 @@ public partial class MelodyIdeasView : UserControl, IThemeAware
         RenderEmptyState();
         Loaded += (_, _) => Focus();
     }
-
-    private static string ModelDirectory =>
-        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "GuitarToolkit", "models");
-
-    private static string DefaultModelPath => Path.Combine(ModelDirectory, "MelodyPhraseTransformer.onnx");
-
-    private static string DefaultVocabularyPath => Path.Combine(ModelDirectory, "MelodyPhraseTransformer.vocab.json");
 
     public void Initialize(IAudioPlayback audio)
     {

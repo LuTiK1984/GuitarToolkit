@@ -19,6 +19,14 @@
     <ProjectReference Include="..\GuitarToolkit.UI\GuitarToolkit.UI.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="..\GuitarToolkit.UI\Models\*.*">
+      <Link>models\%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
   <!-- После сборки: копируем и переименовываем бридж-файлы в output -->
   <Target Name="CopyBridgeFiles" AfterTargets="Build">
     <PropertyGroup>

@@ -4,6 +4,17 @@ All notable changes to GuitarToolkit are documented here.
 
 ## [Unreleased]
 
+## [1.8.1] - 2026-07-01
+
+### Added
+
+- Bundled ready-to-use ONNX runtime models with the Desktop and VST3 builds: `ProgressionNextTokenModel.onnx`, `MelodyPhraseTransformer.onnx`, and `MelodyPhraseTransformer.vocab.json`.
+
+### Changed
+
+- The Inspiration and Melody tabs now load user-installed models from `%AppData%\GuitarToolkit\models` when present, otherwise they fall back to the bundled release models next to the app.
+- The release script now verifies that Desktop and VST3 packages contain the bundled ONNX model files before archives are created.
+
 ## [1.8.0] - 2026-06-13
 
 ### Added

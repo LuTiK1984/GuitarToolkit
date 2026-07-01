@@ -43,15 +43,25 @@ ProgressionBuilder -> ChordLibrary -> ChordPlayer -> IAudioPlayback
 
 That means the model can stay small, symbolic, and safe. GuitarToolkit remains responsible for rendering chords, playback, tabs, fretboard views, and later note-generation tools.
 
-## Model file location
+## Runtime model files
 
-The runtime adapter looks for:
+Release builds include ready-to-use model files next to the app:
+
+```text
+models\ProgressionNextTokenModel.onnx
+models\MelodyPhraseTransformer.onnx
+models\MelodyPhraseTransformer.vocab.json
+```
+
+User-installed models still live in:
 
 ```text
 %AppData%\GuitarToolkit\models\ProgressionNextTokenModel.onnx
+%AppData%\GuitarToolkit\models\MelodyPhraseTransformer.onnx
+%AppData%\GuitarToolkit\models\MelodyPhraseTransformer.vocab.json
 ```
 
-If the file is missing or cannot be loaded, the app falls back to `DemoProgressionNextTokenModel` and shows that status in the Ideas tab. The adapter reloads the model when the installed file timestamp changes, so a new export can be copied into that path and tested immediately from the app's generation UI.
+At runtime the app prefers the user-installed model pair from `%AppData%`. If those files are missing, it falls back to the bundled release model in the application directory. If loading or inference fails, the app falls back to the deterministic demo generator and shows that status in the UI.
 
 The helper script for the current training sandbox is:
 
@@ -60,9 +70,9 @@ cd tools\ml\progression_next_token
 powershell -ExecutionPolicy Bypass -File .\install_model.ps1 -Checkpoint runs\progression_rich_ft\best_model.pt -Python C:\Users\anikj\AppData\Local\Programs\Python\Python311\python.exe
 ```
 
-That script exports the checkpoint to ONNX and copies it to the runtime model folder.
+That script exports the checkpoint to ONNX and copies it to the user runtime model folder, overriding the bundled release model without changing the app files.
 
-Do not commit trained model files or datasets until their license, source, and release policy are clear.
+Do not commit ad-hoc checkpoints, datasets, or experimental model files. Only curated release ONNX models with known provenance should be committed under the application model assets.
 
 ## Recommended first architecture
 
@@ -131,7 +141,7 @@ The model must not directly produce sound, file paths, commands, or UI markup. I
 
 The app must reject or remap unknown tokens before they reach playback. The current skeleton maps unsupported roman numerals to a safe diatonic fallback.
 
-For future melody generation, use the same rule: model returns symbolic notes/durations/articulations, and GuitarToolkit plays or displays them through internal engines.
+For melody generation, use the same rule: model returns symbolic notes, octaves, durations, and phrase tokens, and GuitarToolkit plays or displays them through internal engines.
 
 ---
 
@@ -165,8 +175,8 @@ ProgressionNextTokenModel.onnx
 - `ProgressionModelOutput` - вероятности следующего токена.
 - `GeneratedProgression` - проверенный результат для UI.
 - `ProgressionInspirationService` - слой, который сэмплирует токены и мапит их на аккорды GuitarToolkit.
-- `OnnxProgressionModel` - зарезервированный адаптер под будущую интеграцию ONNX Runtime.
-- `DemoProgressionNextTokenModel` - fallback, пока обученная модель не установлена.
+- `OnnxProgressionModel` - ONNX Runtime адаптер для установленной или bundled-модели прогрессий.
+- `DemoProgressionNextTokenModel` - fallback, если ONNX-модель недоступна или не загрузилась.
 
 Вкладка UI не ждет от модели аудио. Она ждет римские ступени:
 
@@ -182,17 +192,27 @@ ProgressionBuilder -> ChordLibrary -> ChordPlayer -> IAudioPlayback
 
 То есть модель остается маленькой, символической и безопасной. GuitarToolkit отвечает за аккорды, проигрывание, табы, гриф и будущие инструменты генерации нот.
 
-## Где лежит модель
+## Где лежат runtime-модели
 
-Текущий placeholder-адаптер ищет:
+Релизные сборки включают готовые модели рядом с приложением:
+
+```text
+models\ProgressionNextTokenModel.onnx
+models\MelodyPhraseTransformer.onnx
+models\MelodyPhraseTransformer.vocab.json
+```
+
+Пользовательские модели для быстрой проверки после дообучения лежат в:
 
 ```text
 %AppData%\GuitarToolkit\models\ProgressionNextTokenModel.onnx
+%AppData%\GuitarToolkit\models\MelodyPhraseTransformer.onnx
+%AppData%\GuitarToolkit\models\MelodyPhraseTransformer.vocab.json
 ```
 
-Пока ONNX Runtime адаптер не реализован, программа использует `DemoProgressionNextTokenModel` и показывает этот статус во вкладке “Идеи”.
+Во время работы программа сначала пытается использовать пользовательскую модель из `%AppData%`. Если её нет, берёт bundled-модель из папки приложения. Если модель не загрузилась или inference завершился ошибкой, программа переключается на встроенный fallback-генератор и показывает этот статус в интерфейсе.
 
-Не коммить обученные модели и датасеты, пока не понятны лицензии, источник данных и политика релизов.
+Не коммить случайные checkpoint-файлы, датасеты и экспериментальные модели. В репозиторий должны попадать только отобранные релизные ONNX-модели с понятным происхождением.
 
 ## Рекомендуемая первая архитектура
 
@@ -261,4 +281,4 @@ Temperature и top-k лучше применять на стороне C#.
 
 Приложение должно отклонять или безопасно мапить неизвестные токены до проигрывания. Текущий скелет мапит неподдержанные римские ступени на безопасный диатонический fallback.
 
-Для будущей генерации мелодий правило такое же: модель возвращает символические ноты, длительности и артикуляции, а GuitarToolkit проигрывает и отображает их внутренними движками.
+Для генерации мелодий правило такое же: модель возвращает символические ноты, октавы, длительности и фразовые токены, а GuitarToolkit проигрывает и отображает их внутренними движками.

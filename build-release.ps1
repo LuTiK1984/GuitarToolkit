@@ -182,6 +182,9 @@ Write-Host "Checking desktop output..."
 Assert-File (Join-Path $desktopOut "GuitarToolkit.Desktop.exe")
 Assert-File (Join-Path $desktopOut "GuitarToolkit.Core.dll")
 Assert-File (Join-Path $desktopOut "GuitarToolkit.UI.dll")
+Assert-File (Join-Path $desktopOut "models\ProgressionNextTokenModel.onnx")
+Assert-File (Join-Path $desktopOut "models\MelodyPhraseTransformer.onnx")
+Assert-File (Join-Path $desktopOut "models\MelodyPhraseTransformer.vocab.json")
 
 Write-Host "Checking VST3 output..."
 Assert-File (Join-Path $pluginOut "GuitarToolkit.Plugin.dll")
@@ -192,6 +195,9 @@ Assert-File (Join-Path $pluginOut "AudioPlugSharpWPF.dll")
 Assert-File (Join-Path $pluginOut "GuitarToolkit.PluginBridge.vst3")
 Assert-File (Join-Path $pluginOut "GuitarToolkit.PluginBridge.runtimeconfig.json")
 Assert-File (Join-Path $pluginOut "Ijwhost.dll")
+Assert-File (Join-Path $pluginOut "models\ProgressionNextTokenModel.onnx")
+Assert-File (Join-Path $pluginOut "models\MelodyPhraseTransformer.onnx")
+Assert-File (Join-Path $pluginOut "models\MelodyPhraseTransformer.vocab.json")
 
 Write-Host "Checking ML Trainer output..."
 Assert-File (Join-Path $trainerOut "GuitarToolkit.MLTrainer.exe")

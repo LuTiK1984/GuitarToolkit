@@ -24,4 +24,12 @@
     <Resource Include="Assets\GuitarToolkit_icon.png" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="..\GuitarToolkit.UI\Models\*.*">
+      <Link>models\%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>
