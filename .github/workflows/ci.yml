@@ -46,7 +46,7 @@ jobs:
 
       - name: Upload test results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: test-results
           path: "**/TestResults/*.trx"
@@ -75,7 +75,7 @@ jobs:
         run: .\build-release.ps1 -Version "${{ github.event.inputs.version }}" -Configuration Release
 
       - name: Upload release package artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: release-packages-${{ github.event.inputs.version }}
           path: artifacts/release/*.zip
